@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list_flutter/app/features/to_do/domain/entities/to_do_entity.dart' show ToDoEntity;
+import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart' show ToDoEntity;
 
 class ToDoItemWidget extends StatelessWidget {
   final ToDoEntity todo;

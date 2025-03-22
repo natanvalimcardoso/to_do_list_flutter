@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list_flutter/app/features/to_do/presentation/pages/to_do_page.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/presentation/pages/to_do_page.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});

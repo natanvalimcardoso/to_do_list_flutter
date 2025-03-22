@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:to_do_list_flutter/app/features/to_do/domain/entities/to_do_entity.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart';
 
 import '../../../../../core/errors/failure.dart';
 
