@@ -3,47 +3,28 @@ import '../../domain/entities/to_do_entity.dart';
 
 abstract class ToDoState extends Equatable {
   final List<ToDoEntity> todos;
-  final List<ToDoEntity> localTodos;
-  final bool hasMore;
-
-  const ToDoState({
-    required this.todos,
-    required this.localTodos,
-    this.hasMore = true,
-  });
+  const ToDoState({required this.todos});
 
   @override
-  List<Object?> get props => [todos, localTodos, hasMore];
+  List<Object?> get props => [todos];
 }
 
 class ToDoInitialState extends ToDoState {
-  const ToDoInitialState() : super(todos: const [], localTodos: const []);
+  const ToDoInitialState() : super(todos: const []);
 }
 
 class ToDoLoadingState extends ToDoState {
-  const ToDoLoadingState({
-    required super.todos, 
-    required super.localTodos
-  });
+  const ToDoLoadingState({required super.todos});
 }
 
 class ToDoLoadedState extends ToDoState {
-  const ToDoLoadedState({
-    required super.todos,
-    required super.localTodos,
-    required super.hasMore,
-  });
+  const ToDoLoadedState({required super.todos});
 }
 
 class ToDoErrorState extends ToDoState {
   final String message;
-
-  const ToDoErrorState({
-    required super.todos, 
-    required super.localTodos,
-    required this.message,
-  });
+  const ToDoErrorState({required this.message, required super.todos});
 
   @override
-  List<Object?> get props => [todos, localTodos, message];
+  List<Object?> get props => [message, todos];
 }

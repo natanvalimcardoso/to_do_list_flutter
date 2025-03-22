@@ -1,14 +1,10 @@
-
-
-
 import 'package:fpdart/fpdart.dart';
-
 import '../../../../../../core/errors/failure.dart';
 import '../../../domain/entities/to_do_entity.dart';
-import '../../../domain/repositories/to_do_local_repository.dart' show ToDoLocalRepository;
+import '../../../domain/repositories/to_do_local_repository.dart';
 import '../datasources/local/to_do_local_datasource.dart';
 import '../models/to_do_model.dart';
-//todo: O texto de tratamento de erro n pode ser aqui
+
 class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
   final ToDoLocalDatasource datasource;
 
@@ -19,23 +15,18 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
     try {
       final todos = await datasource.getTodos();
       return Right(todos);
-    } catch (e) {
-      return Left(LocalFailure("Erro ao acessar armazenamento local"));
+    } catch (_) {
+      return Left(LocalFailure("Erro ao carregar tarefas locais"));
     }
   }
 
   @override
   Future<Either<Failure, void>> addLocalTodo({required ToDoEntity todo}) async {
     try {
-      final model = ToDoModel(
-        id: todo.id,
-        todo: todo.todo,
-        completed: todo.completed,
-        userId: todo.userId,
-      );
+      final model = ToDoModel.fromEntity(todo);
       await datasource.saveTodoLocal(todo: model);
       return const Right(null);
-    } catch (e) {
+    } catch (_) {
       return Left(LocalFailure("Erro ao salvar tarefa local"));
     }
   }
@@ -45,7 +36,7 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
     try {
       await datasource.deleteTodoLocal(id: id);
       return const Right(null);
-    } catch (e) {
+    } catch (_) {
       return Left(LocalFailure("Erro ao remover tarefa local"));
     }
   }
@@ -55,8 +46,20 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
     try {
       await datasource.updateTodoStatusLocal(id: id, completed: completed);
       return const Right(null);
-    } catch (e) {
+    } catch (_) {
       return Left(LocalFailure("Erro ao atualizar tarefa local"));
+    }
+  }
+
+  // 👇 NOVO método adicionar Vários Todos
+  @override
+  Future<Either<Failure, void>> addAllLocalTodos({required List<ToDoEntity> todos}) async {
+    try {
+      final models = todos.map((entity) => ToDoModel.fromEntity(entity)).toList();
+      await datasource.saveAllTodosLocal(todos: models);
+      return const Right(null);
+    } catch (_) {
+      return Left(LocalFailure("Erro ao salvar tarefas da API localmente"));
     }
   }
 }

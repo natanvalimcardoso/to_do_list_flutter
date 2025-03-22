@@ -1,121 +1,88 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/entities/to_do_entity.dart' show ToDoEntity;
+import '../../domain/entities/to_do_entity.dart';
+import '../../domain/usecases/add_all_local_to_dos_usecase.dart';
 import '../../domain/usecases/add_local_to_do_usecase.dart';
 import '../../domain/usecases/delete_to_do_usecase.dart';
-import '../../domain/usecases/get_local_to_do_usecase.dart';
-import '../../domain/usecases/get_remote_to_do_usecase.dart';
+import '../../domain/usecases/get_local_to_dos_usecase.dart';
+import '../../domain/usecases/get_remote_to_dos_usecase.dart';
 import '../../domain/usecases/toggle_local_to_do_completed_usecase.dart';
 import 'to_do_event.dart';
 import 'to_do_state.dart';
 
 class ToDoBloc extends Bloc<ToDoEvent, ToDoState> {
-   final GetRemoteToDosUsecase getRemoteToDosUsecase;
+  final GetRemoteToDosUsecase getRemoteToDosUsecase;
   final GetLocalToDosUsecase getLocalTodosUseCase;
   final AddLocalToDoUsecase addLocalTodoUseCase;
+  final AddAllLocalToDosUsecase addAllLocalTodosUseCase;
   final DeleteLocalToDoUsecase deleteLocalTodoUseCase;
   final ToggleLocalToDoCompletedUsecase toggleLocalTodoCompletedUseCase;
 
-  int _skip = 0;
-  final int _limit = 20;
+  bool hasLoadedInitialData = false;
 
   ToDoBloc({
     required this.getRemoteToDosUsecase,
     required this.getLocalTodosUseCase,
     required this.addLocalTodoUseCase,
+    required this.addAllLocalTodosUseCase, // NOVO!
     required this.deleteLocalTodoUseCase,
     required this.toggleLocalTodoCompletedUseCase,
   }) : super(const ToDoInitialState()) {
-    on<LoadRemoteToDoEvent>(_onLoadToDos);
-    on<LoadMoreToDoEvent>(_onLoadMoreToDos);
-    on<ToggleToDoStatusEvent>(_onToggleToDoStatus);
+    on<LoadTodosEvent>(_onLoadTodos);
+    on<AddToDoEvent>(_onAddToDo);
+    on<ToggleToDoEvent>(_onToggleToDo);
     on<DeleteToDoEvent>(_onDeleteToDo);
-    on<AddLocalToDoEvent>(_onAddLocalToDo);
-    on<LoadLocalToDoEvent>(_onLoadLocalToDos);
-    on<ToggleLocalToDoEvent>(_onToggleLocalToDo);
-    on<DeleteLocalToDoEvent>(_onDeleteLocalToDo);
   }
-  Future<void> _onLoadToDos(LoadRemoteToDoEvent event, Emitter<ToDoState> emit) async {
-    emit(const ToDoLoadingState(todos: [], localTodos: []));
-    _skip = 0;
 
-    final apiResult = await getRemoteToDosUsecase(skip: _skip, limit: _limit);
+  Future<void> _onLoadTodos(LoadTodosEvent event, Emitter<ToDoState> emit) async {
+    emit(ToDoLoadingState(todos: state.todos));
+
+    // Só carrega API na primeira vez
+    if (!hasLoadedInitialData) {
+      final apiResult = await getRemoteToDosUsecase(skip: 0, limit: 100);
+
+      await apiResult.fold(
+        (failure) async => emit(ToDoErrorState(todos: [], message: failure.message)),
+        (todosFromApi) async {
+          // Salva todos de uma vez, evitando duplicidade pelos nomes
+          await addAllLocalTodosUseCase(todos: todosFromApi);
+          hasLoadedInitialData = true;
+        },
+      );
+    }
+
+    // Sempre lê local após isso
     final localResult = await getLocalTodosUseCase();
 
-    apiResult.fold(
-      (failure) => emit(ToDoErrorState(todos: const [], localTodos: const [], message: failure.message)),
-      (todosLoaded) {
-        _skip += todosLoaded.length;
-        localResult.fold(
-          (failure) => emit(ToDoErrorState(todos: todosLoaded, localTodos: const [], message: failure.message)),
-          (localLoaded) => emit(ToDoLoadedState(todos: todosLoaded, localTodos: localLoaded, hasMore: todosLoaded.length == _limit)),
-        );
-      },
+    localResult.fold(
+      (e) => emit(ToDoErrorState(todos: [], message: e.message)),
+      (localTodos) => emit(ToDoLoadedState(todos: localTodos)),
     );
   }
 
-  Future<void> _onLoadMoreToDos(LoadMoreToDoEvent event, Emitter<ToDoState> emit) async {
-    if (state is ToDoLoadingState || !state.hasMore) return;
-
-    emit(ToDoLoadingState(todos: state.todos, localTodos: state.localTodos));
-
-    final result = await getRemoteToDosUsecase(skip: _skip, limit: _limit);
-
-    result.fold(
-      (failure) => emit(ToDoErrorState(todos: state.todos, localTodos: state.localTodos, message: failure.message)),
-      (todosLoaded) {
-        _skip += todosLoaded.length;
-        final updatedTodos = List.of(state.todos)..addAll(todosLoaded);
-
-        emit(ToDoLoadedState(todos: updatedTodos, localTodos: state.localTodos, hasMore: todosLoaded.length == _limit));
-      },
-    );
-  }
-
-  void _onToggleToDoStatus(ToggleToDoStatusEvent event, Emitter<ToDoState> emit) {
-    final updatedTodos = state.todos.map((todo) {
-      return todo.id == event.id ? todo.copyWith(completed: event.isCompleted) : todo;
-    }).toList();
-
-    emit(ToDoLoadedState(todos: updatedTodos, localTodos: state.localTodos, hasMore: state.hasMore));
-  }
-
-  void _onDeleteToDo(DeleteToDoEvent event, Emitter<ToDoState> emit) {
-    final updatedTodos = state.todos.where((todo) => todo.id != event.id).toList();
-    emit(ToDoLoadedState(todos: updatedTodos, localTodos: state.localTodos, hasMore: state.hasMore));
-  }
-
-  Future<void> _onAddLocalToDo(AddLocalToDoEvent event, Emitter<ToDoState> emit) async {
-    final newTodo = ToDoEntity(
+  Future<void> _onAddToDo(AddToDoEvent event, Emitter<ToDoState> emit) async {
+    final newToDo = ToDoEntity(
       id: DateTime.now().millisecondsSinceEpoch,
       todo: event.todoText,
       completed: false,
       userId: 0,
     );
 
-    await addLocalTodoUseCase(todo: newTodo);
-
-    final updatedLocalTodos = [newTodo, ...state.localTodos];
-    
-    emit(ToDoLoadedState(todos: state.todos, localTodos: updatedLocalTodos, hasMore: state.hasMore));
+    // captura a exceção caso o item já exista
+    try {
+      await addLocalTodoUseCase(todo: newToDo);
+      add(LoadTodosEvent());
+    } catch (e) {
+      emit(ToDoErrorState(message: e.toString().replaceAll('Exception: ', ''), todos: state.todos));
+    }
   }
 
-  Future<void> _onLoadLocalToDos(LoadLocalToDoEvent event, Emitter<ToDoState> emit) async {
-    final localResult = await getLocalTodosUseCase();
-
-    localResult.fold(
-      (failure) => emit(ToDoErrorState(todos: state.todos, localTodos: const [], message: failure.message)),
-      (localLoaded) => emit(ToDoLoadedState(todos: state.todos, localTodos: localLoaded, hasMore: state.hasMore)),
-    );
-  }
-
-  Future<void> _onToggleLocalToDo(ToggleLocalToDoEvent event, Emitter<ToDoState> emit) async {
+  Future<void> _onToggleToDo(ToggleToDoEvent event, Emitter<ToDoState> emit) async {
     await toggleLocalTodoCompletedUseCase(id: event.id, completed: event.completed);
-    add(LoadLocalToDoEvent());
+    add(LoadTodosEvent());
   }
 
-  Future<void> _onDeleteLocalToDo(DeleteLocalToDoEvent event, Emitter<ToDoState> emit) async {
+  Future<void> _onDeleteToDo(DeleteToDoEvent event, Emitter<ToDoState> emit) async {
     await deleteLocalTodoUseCase(id: event.id);
-    add(LoadLocalToDoEvent());
+    add(LoadTodosEvent());
   }
 }

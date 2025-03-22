@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart' show ToDoEntity;
+import '../../domain/entities/to_do_entity.dart';
 
 class ToDoItemWidget extends StatelessWidget {
   final ToDoEntity todo;
-  const ToDoItemWidget({ super.key, required this.todo });
+  final VoidCallback onTap;
+  final VoidCallback onDelete;
+  final ValueChanged<bool?> onChanged;
+
+  const ToDoItemWidget({
+    super.key,
+    required this.todo,
+    required this.onTap,
+    required this.onDelete,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +23,7 @@ class ToDoItemWidget extends StatelessWidget {
       child: ListTile(
         leading: Checkbox(
           value: todo.completed,
-          onChanged: (value) {
-          },
+          onChanged: onChanged,
         ),
         title: Text(
           todo.todo,
@@ -24,11 +33,9 @@ class ToDoItemWidget extends StatelessWidget {
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-          },
+          onPressed: onDelete,
         ),
-        onTap: () {
-        },
+        onTap: onTap,
       ),
     );
   }
