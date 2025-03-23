@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_details_entity.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/presentation/widgets/add_to_do_widget.dart';
+import 'package:to_do_list_flutter/core/constants/routes_constant.dart';
 import '../../../../injections/injection_container.dart';
-import '../../domain/entities/to_do_entity.dart';
 import '../bloc/to_do_bloc.dart';
 import '../bloc/to_do_event.dart';
 import '../bloc/to_do_state.dart';
@@ -16,32 +18,29 @@ class ToDoPage extends StatefulWidget {
 }
 
 class _ToDoPageState extends State<ToDoPage> {
-  late final ToDoBloc _bloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _bloc = getIt<ToDoBloc>()..add(LoadTodosEvent());
-  }
+  final ToDoBloc _bloc = getIt<ToDoBloc>()..add(LoadTodosEvent());
+  final TextEditingController _todoController = TextEditingController();
 
   @override
   void dispose() {
+    _todoController.dispose();
     _bloc.close();
     super.dispose();
   }
 
-  void _toggleToDo(ToDoEntity todo, bool completed) {
-    _bloc.add(ToggleToDoEvent(todo.id, completed));
-  }
-
-  void _deleteToDo(ToDoEntity todo) {
-    _bloc.add(DeleteToDoEvent(todo.id));
+  void _addTodo() {
+    final text = _todoController.text.trim();
+    if (text.isNotEmpty) {
+      _bloc.add(AddToDoEvent(text));
+      _todoController.clear();
+      FocusScope.of(context).unfocus();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ToDoBloc>(
-      create: (_) => _bloc,
+    return BlocProvider.value(
+      value: _bloc,
       child: Scaffold(
         appBar: AppBar(title: const Text('ToDo')),
         body: BlocBuilder<ToDoBloc, ToDoState>(
@@ -54,10 +53,6 @@ class _ToDoPageState extends State<ToDoPage> {
               return Center(child: Text("Erro: ${state.message}"));
             }
 
-            if (state.todos.isEmpty) {
-              return const Center(child: Text("Nenhuma tarefa encontrada."));
-            }
-
             final todosAbertos = state.todos.where((e) => !e.completed).toList();
             final todosConcluidos = state.todos.where((e) => e.completed).toList();
 
@@ -65,6 +60,11 @@ class _ToDoPageState extends State<ToDoPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  AddToDoWidget(
+                    controller: _todoController,
+                    onAdd: _addTodo,
+                    label: 'Digite sua tarefa',
+                  ),
 
                   const SectionTitleWidget(title: '🟢 Tarefas Abertas'),
 
@@ -74,12 +74,22 @@ class _ToDoPageState extends State<ToDoPage> {
                       child: Text("Nenhuma tarefa aberta."),
                     )
                   else
-                    ...todosAbertos.map((todo) => ToDoItemWidget(
-                          todo: todo,
-                          onTap: () {},
-                          onDelete: () => _deleteToDo(todo),
-                          onChanged: (completed) => _toggleToDo(todo, completed!),
-                        )),
+                    ...todosAbertos.map(
+                      (todo) => ToDoItemWidget(
+                        todo: todo,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RoutesConstant.todoDetail,
+                            arguments: ToDoDetailsEntity(todo: todo),
+                          ).then((_) {
+                            _bloc.add(LoadTodosEvent());
+                          });
+                        },
+                        onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
+                        onChanged: (completed) => _bloc.add(ToggleToDoEvent(todo.id, completed!)),
+                      ),
+                    ),
 
                   const Divider(height: 30),
 
@@ -91,12 +101,22 @@ class _ToDoPageState extends State<ToDoPage> {
                       child: Text("Nenhuma tarefa finalizada."),
                     )
                   else
-                    ...todosConcluidos.map((todo) => ToDoItemWidget(
-                          todo: todo,
-                          onTap: () {},
-                          onDelete: () => _deleteToDo(todo),
-                          onChanged: (completed) => _toggleToDo(todo, completed!),
-                        )),
+                    ...todosConcluidos.map(
+                      (todo) => ToDoItemWidget(
+                        todo: todo,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RoutesConstant.todoDetail,
+                            arguments: ToDoDetailsEntity(todo: todo),
+                          ).then((_) {
+                            _bloc.add(LoadTodosEvent());
+                          });
+                        },
+                        onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
+                        onChanged: (completed) => _bloc.add(ToggleToDoEvent(todo.id, completed!)),
+                      ),
+                    ),
 
                   const SizedBox(height: 50),
                 ],
@@ -104,40 +124,6 @@ class _ToDoPageState extends State<ToDoPage> {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _showDialogCreateTodo(context);
-          },
-          child: const Icon(Icons.add),
-        ),
-      ),
-    );
-  }
-
-  void _showDialogCreateTodo(BuildContext context) {
-    final textController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Nova Tarefa'),
-        content: TextField(
-          controller: textController,
-          decoration: const InputDecoration(hintText: 'Digite sua tarefa'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _bloc.add(AddToDoEvent(textController.text));
-              Navigator.pop(context);
-            },
-            child: const Text('Salvar'),
-          ),
-        ],
       ),
     );
   }

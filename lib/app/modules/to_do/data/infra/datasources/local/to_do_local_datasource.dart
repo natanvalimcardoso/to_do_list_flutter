@@ -6,4 +6,5 @@ abstract class ToDoLocalDatasource {
   Future<void> deleteTodoLocal({required int id});
   Future<void> updateTodoStatusLocal({required int id,required bool completed});
   Future<void> saveAllTodosLocal({required List<ToDoModel> todos});
+  Future<void> updateTodoLocal({required ToDoModel todo});
 }

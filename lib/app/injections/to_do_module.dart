@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/add_all_local_to_dos_usecase.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
 import '../modules/to_do/data/external/datasources/local/to_do_local_datasource_impl.dart';
 import '../modules/to_do/data/external/datasources/remote/to_do_remote_datasource_impl.dart';
 import '../modules/to_do/data/infra/datasources/local/to_do_local_datasource.dart';
@@ -43,8 +44,9 @@ void setupTodoModule(GetIt getIt) {
   getIt.registerLazySingleton(() => DeleteLocalToDoUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => ToggleLocalToDoCompletedUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => AddAllLocalToDosUsecase(getIt<ToDoLocalRepository>()));
+  getIt.registerLazySingleton(() => UpdateLocalTodoUsecase(getIt<ToDoLocalRepository>()));
   // Bloc
-  getIt.registerFactory(
+  getIt.registerLazySingleton(
     () => ToDoBloc(
       getRemoteToDosUsecase: getIt<GetRemoteToDosUsecase>(),
       getLocalTodosUseCase: getIt<GetLocalToDosUsecase>(),
@@ -52,6 +54,7 @@ void setupTodoModule(GetIt getIt) {
       deleteLocalTodoUseCase: getIt<DeleteLocalToDoUsecase>(),
       toggleLocalTodoCompletedUseCase: getIt<ToggleLocalToDoCompletedUsecase>(),
       addAllLocalTodosUseCase: getIt<AddAllLocalToDosUsecase>(),
+      updateLocalTodoUsecase: getIt<UpdateLocalTodoUsecase>(),
     ),
   );
 }

@@ -8,4 +8,5 @@ abstract class ToDoLocalRepository {
   Future<Either<Failure, void>> removeLocalTodo({required int id});
   Future<Either<Failure, void>> toggleLocalTodoCompleted({required int id, required bool completed});
   Future<Either<Failure, void>> addAllLocalTodos({required List<ToDoEntity> todos});
+  Future<Either<Failure, void>> updateLocalTodo({required ToDoEntity todo});
 }

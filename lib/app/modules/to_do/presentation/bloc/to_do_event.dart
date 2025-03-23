@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/to_do_entity.dart';
+
 abstract class ToDoEvent extends Equatable {
   const ToDoEvent();
 
@@ -32,4 +34,24 @@ class AddToDoEvent extends ToDoEvent {
 
   @override
   List<Object?> get props => [todoText];
+}
+
+class UpdateToDoEvent extends ToDoEvent {
+  final ToDoEntity todo;
+  const UpdateToDoEvent(this.todo);
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+class EditingTodoChangedEvent extends ToDoEvent {
+  final ToDoEntity todo;
+  const EditingTodoChangedEvent(this.todo);
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+class SaveTodoChangesEvent extends ToDoEvent {
+  const SaveTodoChangesEvent();
 }

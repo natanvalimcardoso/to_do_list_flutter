@@ -42,7 +42,10 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
   }
 
   @override
-  Future<Either<Failure, void>> toggleLocalTodoCompleted({required int id, required bool completed}) async {
+  Future<Either<Failure, void>> toggleLocalTodoCompleted({
+    required int id,
+    required bool completed,
+  }) async {
     try {
       await datasource.updateTodoStatusLocal(id: id, completed: completed);
       return const Right(null);
@@ -51,7 +54,6 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
     }
   }
 
-  // 👇 NOVO método adicionar Vários Todos
   @override
   Future<Either<Failure, void>> addAllLocalTodos({required List<ToDoEntity> todos}) async {
     try {
@@ -60,6 +62,17 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
       return const Right(null);
     } catch (_) {
       return Left(LocalFailure("Erro ao salvar tarefas da API localmente"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateLocalTodo({required ToDoEntity todo}) async {
+    try {
+      final model = ToDoModel.fromEntity(todo);
+      await datasource.updateTodoLocal(todo: model);
+      return const Right(null);
+    } catch (_) {
+      return Left(LocalFailure("Erro ao atualizar tarefa local"));
     }
   }
 }

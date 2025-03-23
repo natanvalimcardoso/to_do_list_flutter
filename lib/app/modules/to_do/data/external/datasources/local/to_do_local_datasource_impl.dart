@@ -12,29 +12,26 @@ class ToDoLocalDatasourceImpl implements ToDoLocalDatasource {
   @override
   Future<List<ToDoModel>> getTodos() async {
     final todosString = prefs.getStringList(SharedPreferencesConstant.localToDo) ?? [];
-    return todosString
-        .map((e) => ToDoModel.fromJson(jsonDecode(e)))
-        .toList();
+    return todosString.map((e) => ToDoModel.fromJson(jsonDecode(e))).toList();
   }
 
-@override
-Future<void> saveTodoLocal({required ToDoModel todo}) async {
-  final todos = await getTodos();
+  @override
+  Future<void> saveTodoLocal({required ToDoModel todo}) async {
+    final todos = await getTodos();
 
-  final hasDuplicate = todos.any(
-    (t) => t.todo.trim().toLowerCase() == todo.todo.trim().toLowerCase(),
-  );
+    final hasDuplicate = todos.any(
+      (t) => t.todo.trim().toLowerCase() == todo.todo.trim().toLowerCase(),
+    );
 
-  if (hasDuplicate) {
-    throw Exception("Tarefa já existe na lista!");
+    if (hasDuplicate) {
+      throw Exception("Tarefa já existe na lista!");
+    }
+
+    todos.insert(0, todo);
+
+    final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
+    await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
   }
-
-  todos.insert(0, todo);
-  
-  final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
-  await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
-}
-
 
   @override
   Future<void> deleteTodoLocal({required int id}) async {
@@ -58,7 +55,7 @@ Future<void> saveTodoLocal({required ToDoModel todo}) async {
 
     todos.removeAt(todoIndex);
     todos.insert(0, todoUpdate); // no topo 👈
-    
+
     await _saveListInPrefs(todos);
   }
 
@@ -67,25 +64,31 @@ Future<void> saveTodoLocal({required ToDoModel todo}) async {
     final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
     await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
   }
-  
- 
-   @override
-     Future<void> saveAllTodosLocal({required List<ToDoModel> todos}) async{
+
+  @override
+  Future<void> saveAllTodosLocal({required List<ToDoModel> todos}) async {
     final localTodos = await getTodos();
 
-    final localTodoNamesSet = localTodos
-      .map((e) => e.todo.trim().toLowerCase())
-      .toSet();
+    final localTodoNamesSet = localTodos.map((e) => e.todo.trim().toLowerCase()).toSet();
 
-    final filteredTodos = todos.where((todoApi) {
-      return !localTodoNamesSet.contains(todoApi.todo.trim().toLowerCase());
-    }).toList();
+    final filteredTodos =
+        todos.where((todoApi) {
+          return !localTodoNamesSet.contains(todoApi.todo.trim().toLowerCase());
+        }).toList();
 
     // Insere tarefas novas no topo
     localTodos.insertAll(0, filteredTodos);
 
     await _saveListInPrefs(localTodos);
   }
-  
 
+  @override
+  Future<void> updateTodoLocal({required ToDoModel todo}) async {
+    final todos = await getTodos();
+    final index = todos.indexWhere((e) => e.id == todo.id);
+    if (index != -1) {
+      todos[index] = todo;
+      await _saveListInPrefs(todos);
+    }
+  }
 }

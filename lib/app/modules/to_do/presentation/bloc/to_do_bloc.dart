@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
 import '../../domain/entities/to_do_entity.dart';
 import '../../domain/usecases/add_all_local_to_dos_usecase.dart';
 import '../../domain/usecases/add_local_to_do_usecase.dart';
@@ -16,21 +17,27 @@ class ToDoBloc extends Bloc<ToDoEvent, ToDoState> {
   final AddAllLocalToDosUsecase addAllLocalTodosUseCase;
   final DeleteLocalToDoUsecase deleteLocalTodoUseCase;
   final ToggleLocalToDoCompletedUsecase toggleLocalTodoCompletedUseCase;
-
+  final UpdateLocalTodoUsecase updateLocalTodoUsecase;
+  ToDoEntity? todoBeingEdited;
   bool hasLoadedInitialData = false;
 
   ToDoBloc({
     required this.getRemoteToDosUsecase,
     required this.getLocalTodosUseCase,
     required this.addLocalTodoUseCase,
-    required this.addAllLocalTodosUseCase, // NOVO!
+    required this.addAllLocalTodosUseCase,
     required this.deleteLocalTodoUseCase,
     required this.toggleLocalTodoCompletedUseCase,
+    required this.updateLocalTodoUsecase,
   }) : super(const ToDoInitialState()) {
     on<LoadTodosEvent>(_onLoadTodos);
     on<AddToDoEvent>(_onAddToDo);
     on<ToggleToDoEvent>(_onToggleToDo);
     on<DeleteToDoEvent>(_onDeleteToDo);
+    on<UpdateToDoEvent>(_onUpdateToDo);
+
+    on<EditingTodoChangedEvent>(_onEditingTodoChanged);
+    on<SaveTodoChangesEvent>(_onSaveTodoChanges);
   }
 
   Future<void> _onLoadTodos(LoadTodosEvent event, Emitter<ToDoState> emit) async {
@@ -84,5 +91,23 @@ class ToDoBloc extends Bloc<ToDoEvent, ToDoState> {
   Future<void> _onDeleteToDo(DeleteToDoEvent event, Emitter<ToDoState> emit) async {
     await deleteLocalTodoUseCase(id: event.id);
     add(LoadTodosEvent());
+  }
+
+  Future<void> _onUpdateToDo(UpdateToDoEvent event, Emitter<ToDoState> emit) async {
+    await updateLocalTodoUsecase(todo: event.todo);
+    add(LoadTodosEvent());
+  }
+
+  void _onEditingTodoChanged(EditingTodoChangedEvent event, Emitter<ToDoState> emit) {
+    todoBeingEdited = event.todo;
+    emit(EditingToDoState(todoBeingEdited: event.todo, todos: state.todos));
+  }
+
+  Future<void> _onSaveTodoChanges(SaveTodoChangesEvent event, Emitter<ToDoState> emit) async {
+    if (todoBeingEdited != null) {
+      await updateLocalTodoUsecase(todo: todoBeingEdited!);
+      todoBeingEdited = null; // Limpa após salvar
+      add(LoadTodosEvent()); //Recarrega listagem com dados atuais
+    }
   }
 }

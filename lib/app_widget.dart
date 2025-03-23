@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/presentation/pages/to_do_page.dart';
+import 'package:to_do_list_flutter/core/constants/routes_constant.dart';
+import 'core/routes/app_router.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -9,7 +10,8 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'ToDo List',
       debugShowCheckedModeBanner: false,
-      home: const ToDoPage(),
+      initialRoute: RoutesConstant.todo,
+      onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }
 }
