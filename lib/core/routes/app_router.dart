@@ -16,13 +16,8 @@ class AppRouter {
           builder: (_) => ToDoDetailPage(todo: args.todo),
         );
 
-      //TODO: fazer tratamento de rota não encontrada
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Sem rota definida para: ${settings.name}')),
-          ),
-        );
+        return  MaterialPageRoute(builder: (_) => const ToDoPage());
     }
   }
 }

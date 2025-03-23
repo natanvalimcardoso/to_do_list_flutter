@@ -9,12 +9,9 @@ class ToDoRemoteDatasourceImpl implements ToDoRemoteDatasource {
   ToDoRemoteDatasourceImpl(this.dio);
 
   @override
-  Future<List<ToDoModel>> fetchTodos({int skip = 0, int limit = 30}) async {
+  Future<List<ToDoModel>> fetchTodos() async {
     try {
-      final response = await dio.get(ApiEndpoint.todos, queryParameters: {
-        'skip': skip,
-        'limit': limit,
-      });
+      final response = await dio.get(ApiEndpoint.todos);
 
       return ToDoModel.fromJsonList(response.data['todos']);
     } catch (e) {

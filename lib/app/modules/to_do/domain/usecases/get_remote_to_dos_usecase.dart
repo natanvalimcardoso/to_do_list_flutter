@@ -10,6 +10,6 @@ class GetRemoteToDosUsecase  {
   GetRemoteToDosUsecase(this.repository);
 
   Future<Either<Failure, List<ToDoEntity>>> call({required int skip, required int limit}) {
-    return repository.getRemoteToDos(skip: skip, limit: limit);
+    return repository.getRemoteToDos();
   }
 }

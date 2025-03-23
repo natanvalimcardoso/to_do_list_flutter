@@ -22,14 +22,12 @@ import '../modules/to_do/domain/usecases/toggle_local_to_do_completed_usecase.da
 import '../modules/to_do/presentation/bloc/to_do_bloc.dart';
 
 void setupTodoModule(GetIt getIt) {
-  // Datasources
   getIt.registerLazySingleton<ToDoRemoteDatasource>(() => ToDoRemoteDatasourceImpl(getIt<Dio>()));
 
   getIt.registerLazySingleton<ToDoLocalDatasource>(
     () => ToDoLocalDatasourceImpl(getIt<SharedPreferences>()),
   );
 
-  // Repositories
   getIt.registerLazySingleton<ToDoRemoteRepository>(
     () => ToDoRemoteRepositoryImpl(getIt<ToDoRemoteDatasource>()),
   );
@@ -38,7 +36,6 @@ void setupTodoModule(GetIt getIt) {
     () => ToDoLocalRepositoryImpl(getIt<ToDoLocalDatasource>()),
   );
 
-  // Usecases
   getIt.registerLazySingleton(() => GetRemoteToDosUsecase(getIt<ToDoRemoteRepository>()));
   getIt.registerLazySingleton(() => GetLocalToDosUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => AddLocalToDoUsecase(getIt<ToDoLocalRepository>(), getIt<GetLocalToDosUsecase>()));
@@ -46,7 +43,7 @@ void setupTodoModule(GetIt getIt) {
   getIt.registerLazySingleton(() => ToggleLocalToDoCompletedUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => AddAllLocalToDosUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => UpdateLocalTodoUsecase(getIt<ToDoLocalRepository>()));
-  // Bloc
+  
   getIt.registerLazySingleton(
     () => ToDoBloc(
       getRemoteToDosUsecase: getIt<GetRemoteToDosUsecase>(),

@@ -12,18 +12,15 @@ class ToDoRemoteRepositoryImpl implements ToDoRemoteRepository {
   ToDoRemoteRepositoryImpl(this.datasource);
 
   @override
-  Future<Either<Failure, List<ToDoEntity>>> getRemoteToDos({
-    required int skip,
-    required int limit,
-  }) async {
+  Future<Either<Failure, List<ToDoEntity>>> getRemoteToDos() async {
     try {
-      final result = await datasource.fetchTodos(skip: skip, limit: limit);
+      final result = await datasource.fetchTodos();
       return Right(result);
     } on DioException catch (dioError) {
       if (dioError.type == DioExceptionType.connectionError) {
         return Left(RemoteFailure());
       } else {
-        return Left(RemoteFailure());
+        return Left(UnexpectedFailure());
       }
     } catch (_) {
       return Left(UnexpectedFailure());

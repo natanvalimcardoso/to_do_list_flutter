@@ -47,7 +47,6 @@ Future<void> saveTodoLocal({required List<ToDoModel> todos}) async {
     await _saveListInPrefs(todos);
   }
 
-  // 🔥 helper privado reutilizável
   Future<void> _saveListInPrefs(List<ToDoModel> todos) async {
     final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
     await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);

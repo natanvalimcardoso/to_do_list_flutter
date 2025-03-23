@@ -4,5 +4,5 @@ import '../entities/to_do_entity.dart';
 import '../errors/errors_todo.dart';
 
 abstract class ToDoRemoteRepository {
-  Future<Either<Failure, List<ToDoEntity>>> getRemoteToDos({required int skip, required int limit});
+  Future<Either<Failure, List<ToDoEntity>>> getRemoteToDos();
 }
