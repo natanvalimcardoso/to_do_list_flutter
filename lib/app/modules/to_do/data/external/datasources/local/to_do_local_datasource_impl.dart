@@ -15,23 +15,11 @@ class ToDoLocalDatasourceImpl implements ToDoLocalDatasource {
     return todosString.map((e) => ToDoModel.fromJson(jsonDecode(e))).toList();
   }
 
-  @override
-  Future<void> saveTodoLocal({required ToDoModel todo}) async {
-    final todos = await getTodos();
-
-    final hasDuplicate = todos.any(
-      (t) => t.todo.trim().toLowerCase() == todo.todo.trim().toLowerCase(),
-    );
-
-    if (hasDuplicate) {
-      throw Exception("Tarefa já existe na lista!");
-    }
-
-    todos.insert(0, todo);
-
-    final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
-    await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
-  }
+ @override
+Future<void> saveTodoLocal({required List<ToDoModel> todos}) async {
+  final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
+  await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
+}
 
   @override
   Future<void> deleteTodoLocal({required int id}) async {

@@ -3,14 +3,15 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/data/infra/repositories/to_do_local_repository_impl.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/data/infra/repositories/to_do_remote_repository_impl.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/add_all_local_to_dos_usecase.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
+
 import '../modules/to_do/data/external/datasources/local/to_do_local_datasource_impl.dart';
 import '../modules/to_do/data/external/datasources/remote/to_do_remote_datasource_impl.dart';
 import '../modules/to_do/data/infra/datasources/local/to_do_local_datasource.dart';
 import '../modules/to_do/data/infra/datasources/remote/to_do_remote_datasource.dart';
-import '../modules/to_do/data/infra/repositories/to_do_local_repository_impl.dart';
-import '../modules/to_do/data/infra/repositories/to_do_remote_repository_impl.dart';
 import '../modules/to_do/domain/repositories/to_do_local_repository.dart';
 import '../modules/to_do/domain/repositories/to_do_remote_repository.dart';
 import '../modules/to_do/domain/usecases/add_local_to_do_usecase.dart';
@@ -30,7 +31,7 @@ void setupTodoModule(GetIt getIt) {
 
   // Repositories
   getIt.registerLazySingleton<ToDoRemoteRepository>(
-    () => TodoRemoteRepositoryImpl(getIt<ToDoRemoteDatasource>()),
+    () => ToDoRemoteRepositoryImpl(getIt<ToDoRemoteDatasource>()),
   );
 
   getIt.registerLazySingleton<ToDoLocalRepository>(
@@ -40,7 +41,7 @@ void setupTodoModule(GetIt getIt) {
   // Usecases
   getIt.registerLazySingleton(() => GetRemoteToDosUsecase(getIt<ToDoRemoteRepository>()));
   getIt.registerLazySingleton(() => GetLocalToDosUsecase(getIt<ToDoLocalRepository>()));
-  getIt.registerLazySingleton(() => AddLocalToDoUsecase(getIt<ToDoLocalRepository>()));
+  getIt.registerLazySingleton(() => AddLocalToDoUsecase(getIt<ToDoLocalRepository>(), getIt<GetLocalToDosUsecase>()));
   getIt.registerLazySingleton(() => DeleteLocalToDoUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => ToggleLocalToDoCompletedUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => AddAllLocalToDosUsecase(getIt<ToDoLocalRepository>()));

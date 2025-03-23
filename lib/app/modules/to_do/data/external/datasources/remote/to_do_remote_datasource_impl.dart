@@ -9,7 +9,6 @@ class ToDoRemoteDatasourceImpl implements ToDoRemoteDatasource {
   ToDoRemoteDatasourceImpl(this.dio);
 
   @override
-  //TODO: logica n pode estar nessa camada
   Future<List<ToDoModel>> fetchTodos({int skip = 0, int limit = 30}) async {
     try {
       final response = await dio.get(ApiEndpoint.todos, queryParameters: {

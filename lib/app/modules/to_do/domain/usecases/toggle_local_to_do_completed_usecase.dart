@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../../core/errors/failure.dart';
+import '../errors/errors_todo.dart';
 import '../repositories/to_do_local_repository.dart';
 
 class ToggleLocalToDoCompletedUsecase {
