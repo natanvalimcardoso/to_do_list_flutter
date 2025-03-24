@@ -6,14 +6,14 @@ import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/delete_to_d
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/toggle_local_to_do_completed_usecase.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
 
-import '../modules/to_do/data/external/datasources/local/to_do_local_datasource_impl.dart';
-import '../modules/to_do/data/infra/datasources/local/to_do_local_datasource.dart';
-import '../modules/to_do/data/infra/repositories/to_do_local_repository_impl.dart';
-import '../modules/to_do/domain/repositories/to_do_local_repository.dart';
-import '../modules/to_do/domain/usecases/add_all_local_to_dos_usecase.dart';
-import '../modules/to_do/domain/usecases/add_local_to_do_usecase.dart';
-import '../modules/to_do/domain/usecases/get_local_to_dos_usecase.dart';
-import '../modules/to_do/presentation/bloc/to_do_bloc.dart';
+import 'data/external/datasources/to_do_local_datasource_impl.dart';
+import 'data/infra/datasources/to_do_local_datasource.dart';
+import 'data/infra/repositories/to_do_local_repository_impl.dart';
+import 'domain/repositories/to_do_local_repository.dart';
+import 'domain/usecases/add_all_local_to_dos_usecase.dart';
+import 'domain/usecases/add_local_to_do_usecase.dart';
+import 'domain/usecases/get_local_to_dos_usecase.dart';
+import 'presentation/bloc/to_do_bloc.dart';
 
 void setupTodoModule(GetIt getIt) {
   getIt.registerLazySingleton<ToDoLocalDatasource>(

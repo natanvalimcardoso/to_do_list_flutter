@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import '../../../domain/entities/to_do_entity.dart';
 import '../../../domain/errors/errors_todo.dart';
 import '../../../domain/repositories/to_do_remote_repository.dart';
-import '../datasources/remote/to_do_remote_datasource.dart';
+import '../datasources/to_do_remote_datasource.dart';
 
 class ToDoRemoteRepositoryImpl implements ToDoRemoteRepository {
   final ToDoRemoteDatasource datasource;

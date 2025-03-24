@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../../../../core/constants/shared_preferences_constant.dart';
-import '../../../infra/datasources/local/to_do_local_datasource.dart';
-import '../../../infra/models/to_do_model.dart';
+import '../../../../../../core/constants/shared_preferences_constant.dart';
+import '../../infra/datasources/to_do_local_datasource.dart';
+import '../../infra/models/to_do_model.dart';
 
 class ToDoLocalDatasourceImpl implements ToDoLocalDatasource {
   final SharedPreferences prefs;

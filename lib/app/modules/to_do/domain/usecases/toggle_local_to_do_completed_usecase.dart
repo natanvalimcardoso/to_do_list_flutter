@@ -12,7 +12,7 @@ class ToggleLocalToDoUsecase {
     final result = await repo.getTodos();
 
     return result.fold(
-      (failure) => Left(failure),
+      (failure) => Left(ToggleLocalToDoFailure()),
       (todos) {
         final index = todos.indexWhere((t) => t.id == id);
         if (index == -1) return Left(ToDoNotFoundFailure());

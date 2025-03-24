@@ -13,7 +13,7 @@ class UpdateLocalToDoUsecase {
     final result = await repo.getTodos();
 
     return result.fold(
-      (failure) => Left(failure),
+      (failure) => Left(UpdateLocalToDoFailure()),
       (todos) {
         final index = todos.indexWhere((t) => t.id == todo.id);
         if (index == -1) return Left(ToDoNotFoundFailure());

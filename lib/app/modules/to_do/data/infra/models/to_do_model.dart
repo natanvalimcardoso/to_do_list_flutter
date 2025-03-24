@@ -1,7 +1,7 @@
 import '../../../domain/entities/to_do_entity.dart';
 
 class ToDoModel extends ToDoEntity {
-  ToDoModel({
+  const ToDoModel({
     required super.id,
     required super.todo,
     required super.completed,

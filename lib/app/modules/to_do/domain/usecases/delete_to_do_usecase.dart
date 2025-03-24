@@ -11,7 +11,7 @@ class DeleteLocalToDoUsecase {
   Future<Either<Failure, Unit>> call(int id) async {
     final result = await repo.getTodos();
     return result.fold(
-      (failure) => Left(failure),
+      (failure) => Left(DeleteToDoFailure()),
       (todos) {
         todos.removeWhere((t) => t.id == id);
         return repo.saveTodos(todos);

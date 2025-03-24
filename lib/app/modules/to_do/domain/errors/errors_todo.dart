@@ -18,3 +18,9 @@ class SaveToDoFailure implements Failure {}
 
 class ToDoNotFoundFailure implements Failure {}
 
+class AddAllLocalToDosFailure implements Failure {}
+
+class ToggleLocalToDoFailure implements Failure {}
+
+class UpdateLocalToDoFailure implements Failure {}
+

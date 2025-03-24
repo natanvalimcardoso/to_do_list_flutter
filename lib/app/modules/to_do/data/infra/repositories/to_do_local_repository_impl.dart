@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/data/infra/datasources/local/to_do_local_datasource.dart' show ToDoLocalDatasource;
+import 'package:to_do_list_flutter/app/modules/to_do/data/infra/datasources/to_do_local_datasource.dart' show ToDoLocalDatasource;
 import 'package:to_do_list_flutter/app/modules/to_do/data/infra/models/to_do_model.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/errors/errors_todo.dart';
