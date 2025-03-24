@@ -14,3 +14,7 @@ class DeleteToDoFailure implements Failure {}
 
 class AddToDoFailure implements Failure {}
 
+class SaveToDoFailure implements Failure {}
+
+class ToDoNotFoundFailure implements Failure {}
+

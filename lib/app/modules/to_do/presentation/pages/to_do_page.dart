@@ -7,8 +7,8 @@ import '../../../../injections/injection_container.dart';
 import '../bloc/to_do_bloc.dart';
 import '../bloc/to_do_event.dart';
 import '../bloc/to_do_state.dart';
-import '../widgets/to_do_item_widget.dart';
 import '../widgets/section_title_widget.dart';
+import '../widgets/to_do_item_widget.dart';
 
 class ToDoPage extends StatefulWidget {
   const ToDoPage({super.key});
@@ -18,7 +18,7 @@ class ToDoPage extends StatefulWidget {
 }
 
 class _ToDoPageState extends State<ToDoPage> {
-  final ToDoBloc _bloc = getIt<ToDoBloc>()..add(LoadTodosEvent());
+  final ToDoBloc _bloc = getIt<ToDoBloc>()..add(const LoadTodosEvent());
   final TextEditingController _todoController = TextEditingController();
 
   @override
@@ -65,9 +65,7 @@ class _ToDoPageState extends State<ToDoPage> {
                     onAdd: _addTodo,
                     label: 'Digite sua tarefa',
                   ),
-
                   const SectionTitleWidget(title: '🟢 Tarefas Abertas'),
-
                   if (todosAbertos.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -83,18 +81,16 @@ class _ToDoPageState extends State<ToDoPage> {
                             RoutesConstant.todoDetail,
                             arguments: ToDoDetailsEntity(todo: todo),
                           ).then((_) {
-                            _bloc.add(LoadTodosEvent());
+                            _bloc.add(const LoadTodosEvent());
                           });
                         },
                         onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
-                        onChanged: (completed) => _bloc.add(ToggleToDoEvent(todo.id, completed!)),
+                        onChanged: (completed) =>
+                            _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
                       ),
                     ),
-
                   const Divider(height: 30),
-
                   const SectionTitleWidget(title: '✅ Tarefas Finalizadas'),
-
                   if (todosConcluidos.isEmpty)
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -110,14 +106,14 @@ class _ToDoPageState extends State<ToDoPage> {
                             RoutesConstant.todoDetail,
                             arguments: ToDoDetailsEntity(todo: todo),
                           ).then((_) {
-                            _bloc.add(LoadTodosEvent());
+                            _bloc.add(const LoadTodosEvent());
                           });
                         },
                         onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
-                        onChanged: (completed) => _bloc.add(ToggleToDoEvent(todo.id, completed!)),
+                        onChanged: (completed) =>
+                            _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
                       ),
                     ),
-
                   const SizedBox(height: 50),
                 ],
               ),

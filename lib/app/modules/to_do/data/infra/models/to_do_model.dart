@@ -28,13 +28,21 @@ class ToDoModel extends ToDoEntity {
         'userId': userId,
       };
 
-  // Método para converter a partir da entidade:
   factory ToDoModel.fromEntity(ToDoEntity entity) {
     return ToDoModel(
       id: entity.id,
       todo: entity.todo,
       completed: entity.completed,
       userId: entity.userId,
+    );
+  }
+
+  ToDoEntity toEntity() {
+    return ToDoEntity(
+      id: id,
+      todo: todo,
+      completed: completed,
+      userId: userId,
     );
   }
 }

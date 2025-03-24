@@ -1,155 +1,139 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/errors/errors_todo.dart';
-
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/delete_to_do_usecase.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/toggle_local_to_do_completed_usecase.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
 import '../../domain/entities/to_do_entity.dart';
+import '../../domain/errors/errors_todo.dart';
 import '../../domain/usecases/add_all_local_to_dos_usecase.dart';
 import '../../domain/usecases/add_local_to_do_usecase.dart';
-import '../../domain/usecases/delete_to_do_usecase.dart';
 import '../../domain/usecases/get_local_to_dos_usecase.dart';
-import '../../domain/usecases/get_remote_to_dos_usecase.dart';
-import '../../domain/usecases/toggle_local_to_do_completed_usecase.dart';
-
-import '../../domain/usecases/update_local_to_do_use_casa.dart';
 import 'to_do_event.dart';
 import 'to_do_state.dart';
 
 class ToDoBloc extends Bloc<ToDoEvent, ToDoState> {
-  final GetRemoteToDosUsecase getRemoteToDosUsecase;
   final GetLocalToDosUsecase getLocalTodosUseCase;
   final AddLocalToDoUsecase addLocalTodoUseCase;
-  final AddAllLocalToDosUsecase addAllLocalTodosUseCase;
   final DeleteLocalToDoUsecase deleteLocalTodoUseCase;
-  final ToggleLocalToDoCompletedUsecase toggleLocalTodoCompletedUseCase;
-  final UpdateLocalTodoUsecase updateLocalTodoUsecase;
-
-  ToDoEntity? todoBeingEdited;
-  bool hasLoadedInitialData = false;
+  final ToggleLocalToDoUsecase toggleLocalTodoUsecase;
+  final UpdateLocalToDoUsecase updateLocalTodoUsecase;
+  final AddAllLocalToDosUsecase addAllLocalTodosUsecase;
 
   ToDoBloc({
-    required this.getRemoteToDosUsecase,
     required this.getLocalTodosUseCase,
     required this.addLocalTodoUseCase,
-    required this.addAllLocalTodosUseCase,
     required this.deleteLocalTodoUseCase,
-    required this.toggleLocalTodoCompletedUseCase,
+    required this.toggleLocalTodoUsecase,
     required this.updateLocalTodoUsecase,
+    required this.addAllLocalTodosUsecase,
   }) : super(const ToDoInitialState()) {
-    on<LoadTodosEvent>(_onLoadTodos);
-    on<AddToDoEvent>(_onAddToDo);
-    on<ToggleToDoEvent>(_onToggleToDo);
-    on<DeleteToDoEvent>(_onDeleteToDo);
-    on<UpdateToDoEvent>(_onUpdateToDo);
-    on<EditingTodoChangedEvent>(_onEditingTodoChanged);
-    on<SaveTodoChangesEvent>(_onSaveTodoChanges);
+    on<LoadTodosEvent>(_loadTodos);
+    on<AddToDoEvent>(_addTodo);
+    on<DeleteToDoEvent>(_deleteTodo);
+    on<ToggleToDoEvent>(_toggleTodo);
+    on<UpdateToDoEvent>(_updateTodo);
+    on<AddAllToDosEvent>(_addAllTodos);
   }
 
-  Future<void> _onLoadTodos(LoadTodosEvent event, Emitter<ToDoState> emit) async {
+  String _mapFailureToMessage(Failure failure) {
+    switch (failure.runtimeType) {
+      case const (DuplicateToDoFailure):
+        return 'Essa tarefa já existe cadastrada.';
+      case const (ToDoNotFoundFailure):
+        return 'Essa tarefa não foi encontrada.';
+      case const (GetTodoListLocalFailure):
+        return 'Erro ao obter as tarefas.';
+      case const (SaveToDoFailure):
+        return 'Erro ao salvar a tarefa.';
+      default:
+        return 'Erro inesperado, tente novamente.';
+    }
+  }
+
+  Future<void> _loadTodos(
+      LoadTodosEvent event, Emitter<ToDoState> emit) async {
     emit(ToDoLoadingState(todos: state.todos));
 
-    if (!hasLoadedInitialData) {
-      final apiResult = await getRemoteToDosUsecase(skip: 0, limit: 100);
-      await apiResult.fold(
-        (failure) async => emit(ToDoErrorState(
-            todos: [],
-            message: 'Erro ao carregar tarefas remotas.')),
-        (todosFromApi) async {
-          await addAllLocalTodosUseCase(todos: todosFromApi);
-          hasLoadedInitialData = true;
-        },
-      );
-    }
+    final result = await getLocalTodosUseCase();
 
-    final localResult = await getLocalTodosUseCase();
-    localResult.fold(
+    result.fold(
       (failure) {
-        final message = failure is GetTodoListLocalFailure
-            ? 'Erro ao carregar tarefas locais.'
-            : 'Erro inesperado.';
-
-        emit(ToDoErrorState(todos: [], message: message));
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
       },
-      (localTodos) => emit(ToDoLoadedState(todos: localTodos)),
+      (todos) => emit(ToDoLoadedState(todos: todos)),
     );
   }
 
-  Future<void> _onAddToDo(AddToDoEvent event, Emitter<ToDoState> emit) async {
+  Future<void> _addTodo(AddToDoEvent event, Emitter<ToDoState> emit) async {
+    emit(ToDoLoadingState(todos: state.todos));
+
     final newToDo = ToDoEntity(
       id: DateTime.now().millisecondsSinceEpoch,
-      todo: event.todoText,
+      todo: event.text,
       completed: false,
       userId: 0,
     );
 
-    final result = await addLocalTodoUseCase(todo: newToDo);
+    final result = await addLocalTodoUseCase(newToDo);
 
     result.fold(
       (failure) {
-        String errorMessage = 'Erro inesperado ao adicionar tarefa.';
-        if (failure is DuplicateToDoFailure) {
-          errorMessage = 'Essa tarefa já está cadastrada!';
-        } else if (failure is AddToDoFailure) {
-          errorMessage = 'Erro ao salvar a tarefa.';
-        }
-
-        emit(ToDoErrorState(message: errorMessage, todos: state.todos));
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
       },
-      (_) => add(LoadTodosEvent()),
+      (_) => add(const LoadTodosEvent()),
     );
   }
 
-  Future<void> _onToggleToDo(ToggleToDoEvent event, Emitter<ToDoState> emit) async {
-    final result = await toggleLocalTodoCompletedUseCase(
-        id: event.id, completed: event.completed);
+  Future<void> _deleteTodo(
+      DeleteToDoEvent event, Emitter<ToDoState> emit) async {
+    final result = await deleteLocalTodoUseCase(event.id);
 
     result.fold(
-      (failure) => emit(ToDoErrorState(
-          message: 'Erro ao atualizar status.',
-          todos: state.todos)),
-      (_) => add(LoadTodosEvent()),
+      (failure) {
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
+      },
+      (_) => add(const LoadTodosEvent()),
     );
   }
 
-  Future<void> _onDeleteToDo(DeleteToDoEvent event, Emitter<ToDoState> emit) async {
-    final result = await deleteLocalTodoUseCase(id: event.id);
-    result.fold(
-      (failure) => emit(ToDoErrorState(
-          message: 'Erro ao tentar excluir a tarefa.',
-          todos: state.todos)),
-      (_) => add(LoadTodosEvent()),
-    );
-  }
-
-  Future<void> _onUpdateToDo(UpdateToDoEvent event, Emitter<ToDoState> emit) async {
-    final result = await updateLocalTodoUsecase(todo: event.todo);
+  Future<void> _toggleTodo(
+      ToggleToDoEvent event, Emitter<ToDoState> emit) async {
+    final result = await toggleLocalTodoUsecase(event.id, event.completed);
 
     result.fold(
-      (failure) => emit(ToDoErrorState(
-          message: 'Erro ao atualizar a tarefa.',
-          todos: state.todos)),
-      (_) => add(LoadTodosEvent()),
+      (failure) {
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
+      },
+      (_) => add(const LoadTodosEvent()),
     );
   }
 
-  void _onEditingTodoChanged(
-      EditingTodoChangedEvent event, Emitter<ToDoState> emit) {
-    todoBeingEdited = event.todo;
-    emit(EditingToDoState(todoBeingEdited: event.todo, todos: state.todos));
+  Future<void> _updateTodo(
+      UpdateToDoEvent event, Emitter<ToDoState> emit) async {
+    final result = await updateLocalTodoUsecase(event.todo);
+
+    result.fold(
+      (failure) {
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
+      },
+      (_) => add(const LoadTodosEvent()),
+    );
   }
 
-  Future<void> _onSaveTodoChanges(
-      SaveTodoChangesEvent event, Emitter<ToDoState> emit) async {
-    if (todoBeingEdited != null) {
-      final result =
-          await updateLocalTodoUsecase(todo: todoBeingEdited!);
-      result.fold(
-        (failure) => emit(ToDoErrorState(
-            message: 'Erro ao salvar modificações.',
-            todos: state.todos)),
-        (_) {
-          todoBeingEdited = null;
-          add(LoadTodosEvent());
-        },
-      );
-    }
+  Future<void> _addAllTodos(
+      AddAllToDosEvent event, Emitter<ToDoState> emit) async {
+    final result = await addAllLocalTodosUsecase(event.todos);
+
+    result.fold(
+      (failure) {
+        emit(ToDoErrorState(
+            message: _mapFailureToMessage(failure), todos: state.todos));
+      },
+      (_) => add(const LoadTodosEvent()),
+    );
   }
 }

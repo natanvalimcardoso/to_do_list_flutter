@@ -10,22 +10,13 @@ class ToDoRemoteDatasourceImpl implements ToDoRemoteDatasource {
 
   @override
   Future<List<ToDoModel>> fetchTodos() async {
-    try {
-      final response = await dio.get(ApiEndpoint.todos);
-
-      return ToDoModel.fromJsonList(response.data['todos']);
-    } catch (e) {
-      throw Exception("Erro ao carregar as Tarefas: ${e.toString()}");
-    }
+    final response = await dio.get(ApiEndpoint.todos);
+    return ToDoModel.fromJsonList(response.data['todos']);
   }
 
   @override
   Future<ToDoModel> fetchTodoById({required int id}) async {
-    try {
-      final response = await dio.get("${ApiEndpoint.todos}/$id");
-      return ToDoModel.fromJson(response.data);
-    } catch (e) {
-      throw Exception("Erro ao carregar detalhes da Tarefa: ${e.toString()}");
-    }
+    final response = await dio.get("${ApiEndpoint.todos}/$id");
+    return ToDoModel.fromJson(response.data);
   }
 }

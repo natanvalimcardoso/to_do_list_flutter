@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../domain/entities/to_do_entity.dart';
 
 abstract class ToDoEvent extends Equatable {
@@ -9,15 +8,16 @@ abstract class ToDoEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadTodosEvent extends ToDoEvent {}
+class LoadTodosEvent extends ToDoEvent {
+  const LoadTodosEvent();
+}
 
-class ToggleToDoEvent extends ToDoEvent {
-  final int id;
-  final bool completed;
-  const ToggleToDoEvent(this.id, this.completed);
+class AddToDoEvent extends ToDoEvent {
+  final String text;
+  const AddToDoEvent(this.text);
 
   @override
-  List<Object?> get props => [id, completed];
+  List<Object?> get props => [text];
 }
 
 class DeleteToDoEvent extends ToDoEvent {
@@ -28,12 +28,13 @@ class DeleteToDoEvent extends ToDoEvent {
   List<Object?> get props => [id];
 }
 
-class AddToDoEvent extends ToDoEvent {
-  final String todoText;
-  const AddToDoEvent(this.todoText);
+class ToggleToDoEvent extends ToDoEvent {
+  final int id;
+  final bool completed;
+  const ToggleToDoEvent({required this.id, required this.completed});
 
   @override
-  List<Object?> get props => [todoText];
+  List<Object?> get props => [id, completed];
 }
 
 class UpdateToDoEvent extends ToDoEvent {
@@ -44,14 +45,10 @@ class UpdateToDoEvent extends ToDoEvent {
   List<Object?> get props => [todo];
 }
 
-class EditingTodoChangedEvent extends ToDoEvent {
-  final ToDoEntity todo;
-  const EditingTodoChangedEvent(this.todo);
+class AddAllToDosEvent extends ToDoEvent {
+  final List<ToDoEntity> todos;
+  const AddAllToDosEvent(this.todos);
 
   @override
-  List<Object?> get props => [todo];
-}
-
-class SaveTodoChangesEvent extends ToDoEvent {
-  const SaveTodoChangesEvent();
+  List<Object?> get props => [todos];
 }

@@ -4,12 +4,24 @@ import '../entities/to_do_entity.dart';
 import '../errors/errors_todo.dart';
 import '../repositories/to_do_local_repository.dart';
 
-class UpdateLocalTodoUsecase {
-  final ToDoLocalRepository repository;
+class UpdateLocalToDoUsecase {
+  final ToDoLocalRepository repo;
 
-  UpdateLocalTodoUsecase(this.repository);
+  UpdateLocalToDoUsecase(this.repo);
 
-  Future<Either<Failure, void>> call({required ToDoEntity todo}) {
-    return repository.updateLocalTodo(todo: todo);
+  Future<Either<Failure, Unit>> call(ToDoEntity todo) async {
+    final result = await repo.getTodos();
+
+    return result.fold(
+      (failure) => Left(failure),
+      (todos) {
+        final index = todos.indexWhere((t) => t.id == todo.id);
+        if (index == -1) return Left(ToDoNotFoundFailure());
+
+        todos[index] = todo;
+
+        return repo.saveTodos(todos);
+      },
+    );
   }
 }

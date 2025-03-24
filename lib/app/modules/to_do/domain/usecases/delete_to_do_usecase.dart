@@ -4,11 +4,18 @@ import '../errors/errors_todo.dart';
 import '../repositories/to_do_local_repository.dart';
 
 class DeleteLocalToDoUsecase {
-  final ToDoLocalRepository repository;
+  final ToDoLocalRepository repo;
 
-  DeleteLocalToDoUsecase(this.repository);
+  DeleteLocalToDoUsecase(this.repo);
 
-  Future<Either<Failure, void>> call({required int id}) {
-    return repository.removeLocalTodo(id: id);
+  Future<Either<Failure, Unit>> call(int id) async {
+    final result = await repo.getTodos();
+    return result.fold(
+      (failure) => Left(failure),
+      (todos) {
+        todos.removeWhere((t) => t.id == id);
+        return repo.saveTodos(todos);
+      },
+    );
   }
 }

@@ -5,11 +5,11 @@ import '../errors/errors_todo.dart';
 import '../repositories/to_do_local_repository.dart';
 
 class GetLocalToDosUsecase {
-  final ToDoLocalRepository repository;
+  final ToDoLocalRepository repo;
 
-  GetLocalToDosUsecase(this.repository);
+  GetLocalToDosUsecase(this.repo);
 
-  Future<Either<Failure, List<ToDoEntity>>> call() {
-    return repository.getLocalTodos();
+  Future<Either<Failure, List<ToDoEntity>>> call() async {
+    return repo.getTodos();
   }
 }

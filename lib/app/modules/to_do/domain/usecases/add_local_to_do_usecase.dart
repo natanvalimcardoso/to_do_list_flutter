@@ -3,31 +3,24 @@ import 'package:to_do_list_flutter/app/modules/to_do/domain/errors/errors_todo.d
 
 import '../entities/to_do_entity.dart';
 import '../repositories/to_do_local_repository.dart';
-import 'get_local_to_dos_usecase.dart';
-
 class AddLocalToDoUsecase {
-  final ToDoLocalRepository repository;
-  final GetLocalToDosUsecase getLocalToDosUsecase;
+  final ToDoLocalRepository repo;
 
-  AddLocalToDoUsecase(this.repository, this.getLocalToDosUsecase);
+  AddLocalToDoUsecase(this.repo);
 
-  Future<Either<Failure, Unit>> call({required ToDoEntity todo}) async {
-    final allTodosOrFailure = await getLocalToDosUsecase();
+  Future<Either<Failure, Unit>> call(ToDoEntity newTodo) async {
+    final result = await repo.getTodos();
 
-    return allTodosOrFailure.fold(
+    return result.fold(
       (failure) => Left(GetTodoListLocalFailure()),
-      (existingTodos) {
-        final hasDuplicate = existingTodos.any(
-          (t) => t.todo.trim().toLowerCase() == todo.todo.trim().toLowerCase(),
+      (todos) async {
+        final exists = todos.any(
+          (t) => t.todo.trim().toLowerCase() == newTodo.todo.trim().toLowerCase(),
         );
+        if (exists) return Left(DuplicateToDoFailure());
 
-        if (hasDuplicate) {
-          return Left(DuplicateToDoFailure());
-        }
-
-        final updatedTodos = [todo, ...existingTodos];
-
-        return repository.addLocalTodo(todos: updatedTodos);
+        todos.insert(0, newTodo);
+        return repo.saveTodos(todos);
       },
     );
   }

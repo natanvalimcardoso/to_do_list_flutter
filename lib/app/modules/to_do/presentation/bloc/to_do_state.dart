@@ -28,12 +28,3 @@ class ToDoErrorState extends ToDoState {
   @override
   List<Object?> get props => [message, todos];
 }
-
-class EditingToDoState extends ToDoState {
-  final ToDoEntity todoBeingEdited;
-
-  const EditingToDoState({required this.todoBeingEdited, required super.todos});
-
-  @override
-  List<Object?> get props => [todoBeingEdited, todos];
-}
