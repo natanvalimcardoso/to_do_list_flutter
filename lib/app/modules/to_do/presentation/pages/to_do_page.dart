@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/routes_constant.dart';
+import '../../../../../core/themes/theme_controller.dart';
 import '../../../../injections/injection_container.dart';
 import '../../domain/entities/to_do_details_entity.dart';
 import '../bloc/to_do_bloc.dart';
@@ -22,6 +23,7 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   final ToDoBloc _bloc = getIt<ToDoBloc>()..add(const SyncToDosEvent());
   final TextEditingController _todoController = TextEditingController();
+   final themeController = getIt<ThemeController>();
 
   @override
   void dispose() {
@@ -40,7 +42,7 @@ class _ToDoPageState extends State<ToDoPage> {
             _bloc.add(const SyncToDosEvent());
           },
           onThemePressed: () {
-            // TODO: Lógica para botão Tema
+            themeController.toggleTheme();
           },
         ),
         body: BlocBuilder<ToDoBloc, ToDoState>(
