@@ -22,7 +22,10 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
               IconButton(onPressed: onThemePressed, icon: const Icon(Icons.color_lens)),
             ],
           ),
-          const Text("CHORES", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            "CHORES",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ],
       ),
     );

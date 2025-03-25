@@ -23,7 +23,7 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   final ToDoBloc _bloc = getIt<ToDoBloc>()..add(const SyncToDosEvent());
   final TextEditingController _todoController = TextEditingController();
-   final themeController = getIt<ThemeController>();
+  final themeController = getIt<ThemeController>();
 
   @override
   void dispose() {
@@ -65,21 +65,13 @@ class _ToDoPageState extends State<ToDoPage> {
                   AddToDoWidget(
                     controller: _todoController,
                     onAdd: () {
-                      final text = _todoController.text.trim();
-                      if (text.isNotEmpty) {
-                        _bloc.add(AddToDoEvent(text));
-                        _todoController.clear();
-                        FocusScope.of(context).unfocus();
-                      }
+                      _bloc.add(AddToDoEvent(_todoController.text.trim()));
                     },
-                    label: 'Digite sua tarefa',
                   ),
-                  const SectionTitleWidget(title: '🟢 Tarefas Abertas'),
+                  Divider(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)),
+                  const SectionTitleWidget(title: 'TO DO'),
                   if (todosAbertos.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("Nenhuma tarefa aberta."),
-                    )
+                    Text("Nenhuma tarefa aberta.")
                   else
                     ...todosAbertos.map(
                       (todo) => ToDoItemWidget(
@@ -93,18 +85,14 @@ class _ToDoPageState extends State<ToDoPage> {
                             _bloc.add(const LoadTodosEvent());
                           });
                         },
-                        onChanged: (completed) => _bloc.add(
-                          ToggleToDoEvent(id: todo.id, completed: completed!),
-                        ),
+                        onChanged:
+                            (completed) =>
+                                _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
                       ),
                     ),
-                  const Divider(height: 30),
-                  const SectionTitleWidget(title: '✅ Tarefas Finalizadas'),
+                  const SectionTitleWidget(title: 'COMPLETED'),
                   if (todosConcluidos.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("Nenhuma tarefa finalizada."),
-                    )
+                    Center(child: Text("Nenhuma tarefa finalizada."))
                   else
                     ...todosConcluidos.map(
                       (todo) => ToDoItemWidget(
@@ -118,9 +106,9 @@ class _ToDoPageState extends State<ToDoPage> {
                             _bloc.add(const LoadTodosEvent());
                           });
                         },
-                        onChanged: (completed) => _bloc.add(
-                          ToggleToDoEvent(id: todo.id, completed: completed!),
-                        ),
+                        onChanged:
+                            (completed) =>
+                                _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
                       ),
                     ),
                   const SizedBox(height: 50),

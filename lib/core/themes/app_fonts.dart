@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 class AppFonts {
   static const fontFamily = 'Roboto';
 
-  static TextStyle sectionTitle(bool isDark) => TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: isDark ? AppColors.secondaryTextDark : AppColors.secondaryText,
-        fontFamily: fontFamily,
-      );
+  static const  TextStyle roboto18w400 = TextStyle(fontSize: 18, fontWeight: FontWeight.w400);
+  static const TextStyle roboto16w500 = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
 
-  static TextStyle todoItem(bool isDark, {bool completed = false}) => TextStyle(
-        fontSize: 16,
-        color: isDark ? AppColors.primaryTextDark : AppColors.primaryText,
-        decoration: completed ? TextDecoration.lineThrough : null,
-        fontFamily: fontFamily,
-      );
 }
