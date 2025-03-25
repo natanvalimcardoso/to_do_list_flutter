@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+
 import '../../domain/entities/to_do_entity.dart';
 
 class ToDoItemWidget extends StatelessWidget {
   final ToDoEntity todo;
   final VoidCallback onTap;
-  final VoidCallback onDelete;
   final ValueChanged<bool?> onChanged;
 
   const ToDoItemWidget({
     super.key,
     required this.todo,
     required this.onTap,
-    required this.onDelete,
     required this.onChanged,
   });
 
@@ -30,10 +29,6 @@ class ToDoItemWidget extends StatelessWidget {
           style: TextStyle(
             decoration: todo.completed ? TextDecoration.lineThrough : null,
           ),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
         ),
         onTap: onTap,
       ),

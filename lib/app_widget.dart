@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list_flutter/core/constants/routes_constant.dart';
+import 'core/constants/routes_constant.dart';
 import 'core/routes/app_router.dart';
 
 class AppWidget extends StatelessWidget {

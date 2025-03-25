@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_details_entity.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/presentation/widgets/add_to_do_widget.dart';
-import 'package:to_do_list_flutter/core/constants/routes_constant.dart';
+
+import '../../../../../core/constants/routes_constant.dart';
 import '../../../../injections/injection_container.dart';
+import '../../domain/entities/to_do_details_entity.dart';
 import '../bloc/to_do_bloc.dart';
 import '../bloc/to_do_event.dart';
 import '../bloc/to_do_state.dart';
+import '../widgets/add_to_do_widget.dart';
+import '../widgets/custom_app_bar_widget.dart';
 import '../widgets/section_title_widget.dart';
 import '../widgets/to_do_item_widget.dart';
 
@@ -18,7 +20,7 @@ class ToDoPage extends StatefulWidget {
 }
 
 class _ToDoPageState extends State<ToDoPage> {
-  final ToDoBloc _bloc = getIt<ToDoBloc>()..add(const LoadTodosEvent());
+  final ToDoBloc _bloc = getIt<ToDoBloc>()..add(const SyncToDosEvent());
   final TextEditingController _todoController = TextEditingController();
 
   @override
@@ -28,21 +30,19 @@ class _ToDoPageState extends State<ToDoPage> {
     super.dispose();
   }
 
-  void _addTodo() {
-    final text = _todoController.text.trim();
-    if (text.isNotEmpty) {
-      _bloc.add(AddToDoEvent(text));
-      _todoController.clear();
-      FocusScope.of(context).unfocus();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _bloc,
       child: Scaffold(
-        appBar: AppBar(title: const Text('ToDo')),
+        appBar: CustomAppBarWidget(
+          onPlanetPressed: () {
+            _bloc.add(const SyncToDosEvent());
+          },
+          onThemePressed: () {
+            // TODO: Lógica para botão Tema
+          },
+        ),
         body: BlocBuilder<ToDoBloc, ToDoState>(
           builder: (context, state) {
             if (state is ToDoLoadingState && state.todos.isEmpty) {
@@ -62,7 +62,14 @@ class _ToDoPageState extends State<ToDoPage> {
                 children: [
                   AddToDoWidget(
                     controller: _todoController,
-                    onAdd: _addTodo,
+                    onAdd: () {
+                      final text = _todoController.text.trim();
+                      if (text.isNotEmpty) {
+                        _bloc.add(AddToDoEvent(text));
+                        _todoController.clear();
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
                     label: 'Digite sua tarefa',
                   ),
                   const SectionTitleWidget(title: '🟢 Tarefas Abertas'),
@@ -84,9 +91,9 @@ class _ToDoPageState extends State<ToDoPage> {
                             _bloc.add(const LoadTodosEvent());
                           });
                         },
-                        onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
-                        onChanged: (completed) =>
-                            _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                        onChanged: (completed) => _bloc.add(
+                          ToggleToDoEvent(id: todo.id, completed: completed!),
+                        ),
                       ),
                     ),
                   const Divider(height: 30),
@@ -109,9 +116,9 @@ class _ToDoPageState extends State<ToDoPage> {
                             _bloc.add(const LoadTodosEvent());
                           });
                         },
-                        onDelete: () => _bloc.add(DeleteToDoEvent(todo.id)),
-                        onChanged: (completed) =>
-                            _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                        onChanged: (completed) => _bloc.add(
+                          ToggleToDoEvent(id: todo.id, completed: completed!),
+                        ),
                       ),
                     ),
                   const SizedBox(height: 50),

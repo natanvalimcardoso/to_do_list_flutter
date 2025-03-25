@@ -52,3 +52,7 @@ class AddAllToDosEvent extends ToDoEvent {
   @override
   List<Object?> get props => [todos];
 }
+
+class SyncToDosEvent extends ToDoEvent {
+  const SyncToDosEvent();
+}

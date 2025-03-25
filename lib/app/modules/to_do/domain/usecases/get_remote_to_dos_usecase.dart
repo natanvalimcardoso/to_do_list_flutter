@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
-import '../errors/errors_todo.dart';
-import '../repositories/to_do_remote_repository.dart';
 
 import '../entities/to_do_entity.dart';
+import '../errors/errors_todo.dart';
+import '../repositories/to_do_remote_repository.dart';
 
 class GetRemoteToDosUsecase  {
   final ToDoRemoteRepository repository;

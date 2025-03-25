@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/data/infra/datasources/to_do_local_datasource.dart' show ToDoLocalDatasource;
-import 'package:to_do_list_flutter/app/modules/to_do/data/infra/models/to_do_model.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/errors/errors_todo.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/repositories/to_do_local_repository.dart' show ToDoLocalRepository;
+import '../datasources/to_do_local_datasource.dart' show ToDoLocalDatasource;
+import '../models/to_do_model.dart';
+import '../../../domain/entities/to_do_entity.dart';
+import '../../../domain/errors/errors_todo.dart';
+import '../../../domain/repositories/to_do_local_repository.dart' show ToDoLocalRepository;
 
 class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
   final ToDoLocalDatasource datasource;

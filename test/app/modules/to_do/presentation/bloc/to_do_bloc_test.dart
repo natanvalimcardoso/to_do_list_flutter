@@ -1,3 +1,5 @@
+// test/todo_bloc_test.dart
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:fpdart/fpdart.dart';
@@ -10,6 +12,7 @@ import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/delete_to_d
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/get_local_to_dos_usecase.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/toggle_local_to_do_completed_usecase.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/update_local_to_do_use_casa.dart';
+import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/sync_to_dos_usecase.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/presentation/bloc/to_do_bloc.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/presentation/bloc/to_do_event.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/presentation/bloc/to_do_state.dart';
@@ -20,6 +23,7 @@ class MockDeleteLocalToDoUsecase extends Mock implements DeleteLocalToDoUsecase 
 class MockToggleLocalToDoUsecase extends Mock implements ToggleLocalToDoUsecase {}
 class MockUpdateLocalToDoUsecase extends Mock implements UpdateLocalToDoUsecase {}
 class MockAddAllLocalToDosUsecase extends Mock implements AddAllLocalToDosUsecase {}
+class MockSyncToDosUsecase extends Mock implements SyncToDosUsecase {}
 
 void main() {
   late ToDoBloc bloc;
@@ -29,6 +33,7 @@ void main() {
   late MockToggleLocalToDoUsecase toggleToDo;
   late MockUpdateLocalToDoUsecase updateToDo;
   late MockAddAllLocalToDosUsecase addAllToDos;
+  late MockSyncToDosUsecase syncToDos;
 
   final todos = [ToDoEntity(id: 1, todo: 'Test bloc', completed: false, userId: 0)];
 
@@ -39,6 +44,7 @@ void main() {
     toggleToDo = MockToggleLocalToDoUsecase();
     updateToDo = MockUpdateLocalToDoUsecase();
     addAllToDos = MockAddAllLocalToDosUsecase();
+    syncToDos = MockSyncToDosUsecase();
 
     bloc = ToDoBloc(
       getLocalTodosUseCase: getLocalToDos,
@@ -47,6 +53,7 @@ void main() {
       toggleLocalTodoUsecase: toggleToDo,
       updateLocalTodoUsecase: updateToDo,
       addAllLocalTodosUsecase: addAllToDos,
+      syncToDosUsecase: syncToDos,
     );
   });
 
@@ -73,6 +80,20 @@ void main() {
     expect: () => [
       const ToDoLoadingState(todos: []),
       const ToDoErrorState(message: 'Erro ao obter as tarefas.', todos: []),
+    ],
+  );
+
+  blocTest<ToDoBloc, ToDoState>(
+    'Deve emitir [Loading, Loaded] na sincronização inicial das tarefas',
+    build: () {
+      when(() => syncToDos()).thenAnswer((_) async => const Right(unit));
+      when(() => getLocalToDos()).thenAnswer((_) async => Right(todos));
+      return bloc;
+    },
+    act: (bloc) => bloc.add(const SyncToDosEvent()),
+    expect: () => [
+      const ToDoLoadingState(todos: []),
+      ToDoLoadedState(todos: todos)
     ],
   );
 }

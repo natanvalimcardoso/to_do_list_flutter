@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../injections/injection_container.dart';
 import '../../domain/entities/to_do_entity.dart';
 import '../bloc/to_do_bloc.dart';
@@ -30,20 +31,6 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
     super.dispose();
   }
 
-  void _deleteToDo() {
-    _bloc.add(DeleteToDoEvent(widget.todo.id));
-    Navigator.pop(context);
-  }
-
-  void _saveEdit() {
-    final editedTodo = widget.todo.copyWith(
-      todo: _editController.text.trim(),
-    );
-
-    _bloc.add(UpdateToDoEvent(editedTodo));
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -52,7 +39,13 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
         appBar: AppBar(
           title: const Text('Detalhes da Tarefa'),
           actions: [
-            IconButton(icon: const Icon(Icons.delete), onPressed: _deleteToDo),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {
+                _bloc.add(DeleteToDoEvent(widget.todo.id));
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
         body: Padding(
@@ -84,7 +77,14 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
               ),
               const SizedBox(height: 25),
               ElevatedButton(
-                onPressed: _saveEdit,
+                onPressed: () {
+                  final editedTodo = widget.todo.copyWith(todo: _editController.text.trim());
+
+                  if (editedTodo.todo.isNotEmpty) {
+                    _bloc.add(UpdateToDoEvent(editedTodo));
+                    Navigator.pop(context);
+                  }
+                },
                 child: const Text('Salvar alterações'),
               ),
             ],
