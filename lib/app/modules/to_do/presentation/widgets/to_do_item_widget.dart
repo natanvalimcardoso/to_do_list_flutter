@@ -9,11 +9,13 @@ class ToDoItemWidget extends StatelessWidget {
   final ToDoEntity todo;
   final VoidCallback onTap;
   final ValueChanged<bool?> onChanged;
+  final VoidCallback onDelete;
 
   const ToDoItemWidget({
     required this.todo,
     required this.onTap,
     required this.onChanged,
+    required this.onDelete,
     super.key,
   });
 
@@ -31,7 +33,7 @@ class ToDoItemWidget extends StatelessWidget {
       color:
           isDark && todo.completed
               ? AppColors.cardBackgroundDark.withValues(alpha: 0.2)
-              : Theme.of(context).cardColor, //
+              : Theme.of(context).cardColor,
       margin: EdgeInsets.symmetric(vertical: size.height * 0.007, horizontal: size.width * 0.04),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -67,6 +69,7 @@ class ToDoItemWidget extends StatelessWidget {
           horizontal: size.width * 0.02,
           vertical: size.height * 0.005,
         ),
+        trailing: IconButton(icon: const Icon(Icons.delete_outline), onPressed: onDelete),
       ),
     );
   }

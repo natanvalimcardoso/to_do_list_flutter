@@ -95,6 +95,9 @@ class _ToDoPageState extends State<ToDoPage> {
                           onChanged:
                               (completed) =>
                                   _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                          onDelete: () {
+                            _bloc.add(DeleteToDoEvent(todo.id));
+                          },
                         );
                       },
                     ),
@@ -122,6 +125,9 @@ class _ToDoPageState extends State<ToDoPage> {
                           onChanged:
                               (completed) =>
                                   _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                          onDelete: () {
+                            _bloc.add(DeleteToDoEvent(todo.id));
+                          },
                         );
                       },
                     ),
