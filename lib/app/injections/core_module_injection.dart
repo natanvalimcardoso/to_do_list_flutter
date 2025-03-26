@@ -5,11 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/themes/theme_controller.dart';
 
 Future<void> setupCoreModule(GetIt getIt) async {
+
   final prefs = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(prefs);
 
-  final dio = Dio();
-  getIt.registerLazySingleton<Dio>(() => dio);
+  getIt.registerLazySingleton<Dio>(() => Dio());
 
-   getIt.registerLazySingleton(() => ThemeController());
+  getIt.registerLazySingleton(() => ThemeController()); 
 }

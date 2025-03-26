@@ -5,12 +5,12 @@ import '../errors/errors_todo.dart';
 import '../repositories/to_do_local_repository.dart';
 
 class AddAllLocalToDosUsecase {
-  final ToDoLocalRepository repo;
+  final ToDoLocalRepository toDoLocalRepository;
 
-  AddAllLocalToDosUsecase(this.repo);
+  AddAllLocalToDosUsecase(this.toDoLocalRepository);
 
   Future<Either<Failure, Unit>> call(List<ToDoEntity> newTodos) async {
-    final result = await repo.getTodos();
+    final result = await toDoLocalRepository.getTodos();
     return result.fold(
       (failure) => Left(AddAllLocalToDosFailure()),
       (todos) {
@@ -21,7 +21,7 @@ class AddAllLocalToDosUsecase {
             
         todos.insertAll(0, filtered);
 
-        return repo.saveTodos(todos);
+        return toDoLocalRepository.saveTodos(todos);
       },
     );
   }

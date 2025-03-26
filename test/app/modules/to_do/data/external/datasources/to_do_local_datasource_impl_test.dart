@@ -6,7 +6,6 @@ import 'package:to_do_list_flutter/app/modules/to_do/data/external/datasources/t
 import 'package:to_do_list_flutter/app/modules/to_do/data/infra/models/to_do_model.dart';
 import 'package:to_do_list_flutter/core/constants/shared_preferences_constant.dart';
 
-// Mock do SharedPreferences:
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 
 void main() {

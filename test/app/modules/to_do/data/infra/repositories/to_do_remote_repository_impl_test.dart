@@ -8,7 +8,6 @@ import 'package:to_do_list_flutter/app/modules/to_do/data/infra/repositories/to_
 import 'package:to_do_list_flutter/app/modules/to_do/domain/entities/to_do_entity.dart';
 import 'package:to_do_list_flutter/app/modules/to_do/domain/errors/errors_todo.dart';
 
-// Cria mock do datasource
 class ToDoRemoteDatasourceMock extends Mock implements ToDoRemoteDatasource {}
 
 void main() {

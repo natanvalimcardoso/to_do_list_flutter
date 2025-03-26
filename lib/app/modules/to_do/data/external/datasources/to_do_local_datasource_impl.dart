@@ -13,13 +13,13 @@ class ToDoLocalDatasourceImpl implements ToDoLocalDatasource {
 
   @override
   Future<List<ToDoModel>> getTodos() async {
-    final todosString = prefs.getStringList(SharedPreferencesConstant.localToDo) ?? [];
-    return todosString.map((e) => ToDoModel.fromJson(jsonDecode(e))).toList();
+    final toDosString = prefs.getStringList(SharedPreferencesConstant.localToDo) ?? [];
+    return toDosString.map((e) => ToDoModel.fromJson(jsonDecode(e))).toList();
   }
 
   @override
-  Future<void> saveTodos(List<ToDoModel> todos) async {
-    final todosEncoded = todos.map((t) => jsonEncode(t.toJson())).toList();
-    await prefs.setStringList(SharedPreferencesConstant.localToDo, todosEncoded);
+  Future<void> saveTodos(List<ToDoModel> toDos) async {
+    final toDosEncoded = toDos.map((t) => jsonEncode(t.toJson())).toList();
+    await prefs.setStringList(SharedPreferencesConstant.localToDo, toDosEncoded);
   }
 }

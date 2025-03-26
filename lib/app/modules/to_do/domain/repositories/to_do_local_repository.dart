@@ -5,5 +5,5 @@ import '../errors/errors_todo.dart';
 
 abstract class ToDoLocalRepository {
   Future<Either<Failure, List<ToDoEntity>>> getTodos();
-  Future<Either<Failure, Unit>> saveTodos(List<ToDoEntity> todos);
+  Future<Either<Failure, Unit>> saveTodos(List<ToDoEntity> toDos);
 }  

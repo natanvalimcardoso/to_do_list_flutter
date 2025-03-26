@@ -1,9 +1,10 @@
 import 'package:fpdart/fpdart.dart';
-import '../datasources/to_do_local_datasource.dart' show ToDoLocalDatasource;
-import '../models/to_do_model.dart';
+
 import '../../../domain/entities/to_do_entity.dart';
 import '../../../domain/errors/errors_todo.dart';
-import '../../../domain/repositories/to_do_local_repository.dart' show ToDoLocalRepository;
+import '../../../domain/repositories/to_do_local_repository.dart';
+import '../datasources/to_do_local_datasource.dart';
+import '../models/to_do_model.dart';
 
 class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
   final ToDoLocalDatasource datasource;
@@ -13,19 +14,19 @@ class ToDoLocalRepositoryImpl implements ToDoLocalRepository {
   @override
   Future<Either<Failure, List<ToDoEntity>>> getTodos() async {
     try {
-      final modelos = await datasource.getTodos();
-      final entidades = modelos.map((model) => model.toEntity()).toList();
-      return Right(entidades); 
+      final toDosModel = await datasource.getTodos();
+      final toDoEntities = toDosModel.map((model) => model.toEntity()).toList();
+      return Right(toDoEntities); 
     } catch (_) {
       return Left(GetTodoListLocalFailure());
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> saveTodos(List<ToDoEntity> todos) async {
+  Future<Either<Failure, Unit>> saveTodos(List<ToDoEntity> toDos) async {
     try {
-      final modelos = todos.map(ToDoModel.fromEntity).toList(); 
-      await datasource.saveTodos(modelos);
+      final toDosModel = toDos.map(ToDoModel.fromEntity).toList(); 
+      await datasource.saveTodos(toDosModel);
       return const Right(unit);
     } catch (_) {
       return Left(SaveToDoFailure());

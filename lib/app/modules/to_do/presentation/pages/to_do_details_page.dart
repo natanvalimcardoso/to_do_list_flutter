@@ -25,11 +25,13 @@ class ToDoDetailPage extends StatefulWidget {
 class _ToDoDetailPageState extends State<ToDoDetailPage> {
   final TextEditingController _editController = TextEditingController();
   final ToDoBloc _bloc = getIt<ToDoBloc>();
+  late bool _isCompleted;
 
   @override
   void initState() {
     super.initState();
     _editController.text = widget.todo.todo;
+    _isCompleted = widget.todo.completed;
   }
 
   @override
@@ -54,28 +56,8 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
             IconButton(
               icon: Icon(Icons.delete, size: size.width * 0.06),
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: const Text('Excluir Tarefa'),
-                        content: const Text('Tem certeza que deseja excluir esta tarefa?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancelar'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              _bloc.add(DeleteToDoEvent(widget.todo.id));
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Excluir'),
-                          ),
-                        ],
-                      ),
-                );
+                _bloc.add(DeleteToDoEvent(widget.todo.id));
+                Navigator.pop(context);
               },
             ),
           ],
@@ -102,18 +84,17 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
                   maxLines: 3,
                 ),
                 SizedBox(height: size.height * 0.02),
-
                 Row(
                   children: [
                     const Text('Tarefa concluída: ', style: AppFonts.roboto16w400),
                     Transform.scale(
                       scale: 1.4,
                       child: CustomCheckbox(
-                        value: widget.todo.completed,
+                        value: _isCompleted,
                         onChanged: (bool? completed) {
-                          final editedTodo = widget.todo.copyWith(completed: completed!);
-                          _bloc.add(UpdateToDoEvent(editedTodo));
-                          Navigator.pop(context);
+                          setState(() {
+                            _isCompleted = completed ?? false;
+                          });
                         },
                       ),
                     ),
@@ -122,8 +103,10 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
                 SizedBox(height: size.height * 0.25),
                 CustomDetailsButtonWidget(
                   onPressed: () {
-                    final editedTodo = widget.todo.copyWith(todo: _editController.text.trim());
-
+                    final editedTodo = widget.todo.copyWith(
+                      todo: _editController.text.trim(),
+                      completed: _isCompleted,
+                    );
                     _bloc.add(UpdateToDoEvent(editedTodo));
                     Navigator.pop(context);
                   },

@@ -1,5 +1,3 @@
-// lib/injections/todo_module.dart
-
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -22,7 +20,7 @@ import 'domain/usecases/update_local_to_do_use_casa.dart';
 import 'presentation/bloc/to_do_bloc.dart';
 
 void setupTodoModule(GetIt getIt) {
-  // DataSources
+
   getIt.registerLazySingleton<ToDoLocalDatasource>(
     () => ToDoLocalDatasourceImpl(getIt<SharedPreferences>()),
   );
@@ -31,7 +29,6 @@ void setupTodoModule(GetIt getIt) {
     () => ToDoRemoteDatasourceImpl(getIt<Dio>()),
   );
 
-  // Repositories
   getIt.registerLazySingleton<ToDoLocalRepository>(
     () => ToDoLocalRepositoryImpl(getIt<ToDoLocalDatasource>()),
   );
@@ -40,7 +37,6 @@ void setupTodoModule(GetIt getIt) {
     () => ToDoRemoteRepositoryImpl(getIt<ToDoRemoteDatasource>()),
   );
 
-  // Usecases
   getIt.registerLazySingleton(() => GetLocalToDosUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => AddLocalToDoUsecase(getIt<ToDoLocalRepository>()));
   getIt.registerLazySingleton(() => DeleteLocalToDoUsecase(getIt<ToDoLocalRepository>()));
@@ -55,7 +51,6 @@ void setupTodoModule(GetIt getIt) {
     ),
   );
 
-  // Bloc
   getIt.registerLazySingleton(
     () => ToDoBloc(
       getLocalTodosUseCase: getIt<GetLocalToDosUsecase>(),

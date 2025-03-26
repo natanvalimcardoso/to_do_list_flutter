@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../../../../../core/network/api_endpoint.dart';
+import '../../../../../../core/constants/api_endpoint_constant.dart';
 import '../../infra/datasources/to_do_remote_datasource.dart';
 import '../../infra/models/to_do_model.dart';
 
@@ -10,7 +10,7 @@ class ToDoRemoteDatasourceImpl implements ToDoRemoteDatasource {
 
   @override
   Future<List<ToDoModel>> fetchTodos() async {
-    final response = await dio.get(ApiEndpoint.todos);
+    final response = await dio.get(ApiEndpoint.toDos);
     return ToDoModel.fromJsonList(response.data['todos']);
   }
 
