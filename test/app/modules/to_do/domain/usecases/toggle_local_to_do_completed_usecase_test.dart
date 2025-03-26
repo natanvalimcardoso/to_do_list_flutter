@@ -33,7 +33,7 @@ void main() {
   });
 
   test('Deve retornar falha caso não encontre tarefa', () async {
-    when(() => repository.getTodos()).thenAnswer((_) async => Right([]));
+    when(() => repository.getTodos()).thenAnswer((_) async => const Right([]));
 
     final result = await usecase(999, true); 
 

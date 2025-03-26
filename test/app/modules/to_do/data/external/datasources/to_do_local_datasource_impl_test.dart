@@ -21,8 +21,8 @@ void main() {
   const key = SharedPreferencesConstant.localToDo;
 
   final tToDoModelList = [
-    ToDoModel(id: 1, todo: "Teste 1", completed: true, userId: 0),
-    ToDoModel(id: 2, todo: "Teste 2", completed: false, userId: 0),
+    const ToDoModel(id: 1, todo: 'Teste 1', completed: true, userId: 0),
+    const ToDoModel(id: 2, todo: 'Teste 2', completed: false, userId: 0),
   ];
 
   group('getTodos()', () {

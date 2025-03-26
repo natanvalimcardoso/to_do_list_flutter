@@ -18,10 +18,10 @@ void main() {
   });
 
   final todos = [
-    ToDoEntity(id: 1, todo: 'Tarefa antiga', completed: false, userId: 0),
+    const ToDoEntity(id: 1, todo: 'Tarefa antiga', completed: false, userId: 0),
   ];
 
-  final todoAtualizado = ToDoEntity(id: 1, todo: 'Tarefa atualizada', completed: true, userId: 0);
+  final todoAtualizado = const ToDoEntity(id: 1, todo: 'Tarefa atualizada', completed: true, userId: 0);
 
   test('Deve atualizar a tarefa corretamente', () async {
     when(() => repository.getTodos()).thenAnswer((_) async => Right([...todos]));

@@ -35,7 +35,7 @@ void main() {
   late MockAddAllLocalToDosUsecase addAllToDos;
   late MockSyncToDosUsecase syncToDos;
 
-  final todos = [ToDoEntity(id: 1, todo: 'Test bloc', completed: false, userId: 0)];
+  final todos = [const ToDoEntity(id: 1, todo: 'Test bloc', completed: false, userId: 0)];
 
   setUp(() {
     getLocalToDos = MockGetLocalToDosUsecase();

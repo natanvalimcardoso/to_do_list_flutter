@@ -5,9 +5,7 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
   final VoidCallback onPlanetPressed;
 
   const CustomAppBarWidget({
-    super.key,
-    required this.onThemePressed,
-    required this.onPlanetPressed,
+    required this.onThemePressed, required this.onPlanetPressed, super.key,
   });
 
   @override

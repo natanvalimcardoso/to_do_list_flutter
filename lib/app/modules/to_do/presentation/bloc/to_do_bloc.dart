@@ -1,13 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:to_do_list_flutter/app/modules/to_do/domain/usecases/sync_to_dos_usecase.dart';
-import '../../domain/usecases/delete_to_do_usecase.dart';
-import '../../domain/usecases/toggle_local_to_do_completed_usecase.dart';
-import '../../domain/usecases/update_local_to_do_use_casa.dart';
+
 import '../../domain/entities/to_do_entity.dart';
 import '../../domain/errors/errors_todo.dart';
 import '../../domain/usecases/add_all_local_to_dos_usecase.dart';
 import '../../domain/usecases/add_local_to_do_usecase.dart';
+import '../../domain/usecases/delete_to_do_usecase.dart';
 import '../../domain/usecases/get_local_to_dos_usecase.dart';
+import '../../domain/usecases/sync_to_dos_usecase.dart';
+import '../../domain/usecases/toggle_local_to_do_completed_usecase.dart';
+import '../../domain/usecases/update_local_to_do_use_casa.dart';
 import 'to_do_event.dart';
 import 'to_do_state.dart';
 

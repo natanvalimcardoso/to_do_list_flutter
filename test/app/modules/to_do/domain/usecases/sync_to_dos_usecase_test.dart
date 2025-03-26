@@ -18,11 +18,11 @@ void main() {
   late MockToDoRemoteRepository remoteRepository;
 
   final remoteToDos = [
-    ToDoEntity(id: 1, todo: 'Task 1', completed: false, userId: 1),
-    ToDoEntity(id: 2, todo: 'Task 2', completed: false, userId: 2),
+    const ToDoEntity(id: 1, todo: 'Task 1', completed: false, userId: 1),
+    const ToDoEntity(id: 2, todo: 'Task 2', completed: false, userId: 2),
   ];
 
-  final localToDos = [ToDoEntity(id: 1, todo: 'Task 1', completed: false, userId: 1)];
+  final localToDos = [const ToDoEntity(id: 1, todo: 'Task 1', completed: false, userId: 1)];
 
   setUp(() {
     localRepository = MockToDoLocalRepository();

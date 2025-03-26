@@ -9,7 +9,7 @@ import '../bloc/to_do_event.dart';
 class ToDoDetailPage extends StatefulWidget {
   final ToDoEntity todo;
 
-  const ToDoDetailPage({super.key, required this.todo});
+  const ToDoDetailPage({required this.todo, super.key});
 
   @override
   State<ToDoDetailPage> createState() => _ToDoDetailPageState();

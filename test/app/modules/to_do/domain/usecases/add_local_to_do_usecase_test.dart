@@ -1,4 +1,6 @@
 // imports mesmos acima (só mudança da classe do Usecase)
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -21,7 +23,7 @@ void main() {
   final todoNovo = const ToDoEntity(id: 1, todo: 'Nova tarefa', completed: false, userId: 0);
 
   test('Adicionar com sucesso quando não houver duplicidade', () async {
-    when(() => repository.getTodos()).thenAnswer((_) async => Right([]));
+    when(() => repository.getTodos()).thenAnswer((_) async =>  Right([]));
     when(() => repository.saveTodos(any())).thenAnswer((_) async => const Right(unit));
 
     final result = await usecase(todoNovo);

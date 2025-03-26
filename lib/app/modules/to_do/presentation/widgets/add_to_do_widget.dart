@@ -9,9 +9,7 @@ class AddToDoWidget extends StatelessWidget {
   final String label;
 
   AddToDoWidget({
-    super.key,
-    required this.controller,
-    required this.onAdd,
+    required this.controller, required this.onAdd, super.key,
     this.label = 'Add item',
   });
 
@@ -64,7 +62,7 @@ class AddToDoWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 child: Container(
                   padding: EdgeInsets.all(size.width * 0.012),
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.accentBlue),
+                  decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.accentBlue),
                   child: const Icon(Icons.add, color: Colors.white),
                 ),
               ),

@@ -10,18 +10,26 @@ class AppTheme {
     ),
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.backgroundLight,
-    cardColor: AppColors.cardBackgroundLight,
+    cardColor: Colors.white,
     fontFamily: AppFonts.fontFamily,
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 0,
       backgroundColor: AppColors.backgroundLight,
       iconTheme: IconThemeData(color: AppColors.primaryText),
     ),
-    checkboxTheme: CheckboxThemeData(
-      checkColor: WidgetStateProperty.all(Colors.white),
-      fillColor: WidgetStateProperty.all(AppColors.completedGreen),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: AppColors.accentBlue,
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: AppColors.accentBlue),
+
+    colorScheme: const ColorScheme.light(
+      primary: AppColors.accentBlue,
+      secondary: AppColors.accentBlue,
+      surface: AppColors.cardBackgroundLight,
+      error: Colors.red,
+      onSecondary: Colors.white,
+      tertiaryContainer: AppColors.primaryText,
+      tertiaryFixed: AppColors.secondaryText,
+    ),
   );
 
   static ThemeData get dark => ThemeData(
@@ -34,15 +42,25 @@ class AppTheme {
     cardColor: AppColors.cardBackgroundDark,
     fontFamily: AppFonts.fontFamily,
 
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       elevation: 0,
       backgroundColor: AppColors.backgroundDark,
       iconTheme: IconThemeData(color: AppColors.primaryTextDark),
     ),
-    checkboxTheme: CheckboxThemeData(
-      checkColor: WidgetStateProperty.all(Colors.white),
-      fillColor: WidgetStateProperty.all(AppColors.completedGreen),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: AppColors.accentBlue,
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: AppColors.accentBlue),
+
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.accentBlue,
+      secondary: AppColors.accentBlue,
+      surface: AppColors.cardBackgroundDark,
+      error: Colors.red,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onError: Colors.white,
+      tertiaryContainer: AppColors.cardBackgroundLight,
+      tertiaryFixed: AppColors.secondaryText,
+    ),
   );
 }

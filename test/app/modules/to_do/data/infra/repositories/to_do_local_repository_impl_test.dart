@@ -17,8 +17,8 @@ void main() {
   });
 
   final tToDoModelList = [
-     ToDoModel(id: 1, todo: "Teste", completed: false, userId: 0),
-     ToDoModel(id: 2, todo: "Outro Teste", completed: true, userId: 0),
+     const ToDoModel(id: 1, todo: 'Teste', completed: false, userId: 0),
+     const ToDoModel(id: 2, todo: 'Outro Teste', completed: true, userId: 0),
   ];
 
   final tToDoEntityList =

@@ -25,8 +25,8 @@ void main() {
   };
 
   final tToDoList = [
-    ToDoModel(id: 1, todo: 'Tarefa 1', completed: false, userId: 0),
-    ToDoModel(id: 2, todo: 'Tarefa 2', completed: true, userId: 0),
+    const ToDoModel(id: 1, todo: 'Tarefa 1', completed: false, userId: 0),
+    const ToDoModel(id: 2, todo: 'Tarefa 2', completed: true, userId: 0),
   ];
 
   group('fetchTodos()', () {

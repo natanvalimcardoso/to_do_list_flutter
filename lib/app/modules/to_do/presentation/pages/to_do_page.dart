@@ -34,6 +34,7 @@ class _ToDoPageState extends State<ToDoPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return BlocProvider.value(
       value: _bloc,
       child: Scaffold(
@@ -71,7 +72,7 @@ class _ToDoPageState extends State<ToDoPage> {
                   Divider(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)),
                   const SectionTitleWidget(title: 'TO DO'),
                   if (todosAbertos.isEmpty)
-                    Text("Nenhuma tarefa aberta.")
+                    const Text("Nenhuma tarefa aberta.")
                   else
                     ...todosAbertos.map(
                       (todo) => ToDoItemWidget(
@@ -92,7 +93,7 @@ class _ToDoPageState extends State<ToDoPage> {
                     ),
                   const SectionTitleWidget(title: 'COMPLETED'),
                   if (todosConcluidos.isEmpty)
-                    Center(child: Text("Nenhuma tarefa finalizada."))
+                    const Center(child: Text('Nenhuma tarefa finalizada.'))
                   else
                     ...todosConcluidos.map(
                       (todo) => ToDoItemWidget(
@@ -111,7 +112,7 @@ class _ToDoPageState extends State<ToDoPage> {
                                 _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
                       ),
                     ),
-                  const SizedBox(height: 50),
+                   SizedBox(height: size.height * 0.05),
                 ],
               ),
             );

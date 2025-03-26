@@ -15,7 +15,7 @@ void main() {
     usecase = DeleteLocalToDoUsecase(repository);
   });
 
-   final todosList = [ ToDoEntity(id: 1, todo: 'Tarefa', completed: false, userId: 0)];
+   final todosList = [ const ToDoEntity(id: 1, todo: 'Tarefa', completed: false, userId: 0)];
   
   test('Deve deletar tarefa corretamente', () async {
     when(() => repository.getTodos()).thenAnswer((_) async =>  Right(todosList));

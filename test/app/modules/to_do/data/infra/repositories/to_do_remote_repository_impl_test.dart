@@ -21,8 +21,8 @@ void main() {
   });
 
   final tToDoModelList = [
-     ToDoModel(id: 1, todo: "Testar app", completed: false, userId: 0),
-     ToDoModel(id: 2, todo: "Corrigir bugs", completed: true, userId: 0),
+     const ToDoModel(id: 1, todo: "Testar app", completed: false, userId: 0),
+     const ToDoModel(id: 2, todo: "Corrigir bugs", completed: true, userId: 0),
   ];
 
   final List<ToDoEntity> tToDoEntityList = tToDoModelList;
@@ -44,7 +44,7 @@ void main() {
     test('Deve retornar RemoteFailure quando der erro de conexão no Dio', () async {
       //Arrange
       when(() => datasource.fetchTodos()).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
         type: DioExceptionType.connectionError,
       ));
 
@@ -60,7 +60,7 @@ void main() {
     test('Deve retornar UnexpectedFailure quando ocorrer outro erro no Dio', () async {
       // Arrange
       when(() => datasource.fetchTodos()).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
+        requestOptions: RequestOptions(),
         type: DioExceptionType.badResponse,
       ));
 
