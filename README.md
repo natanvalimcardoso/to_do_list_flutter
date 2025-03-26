@@ -78,11 +78,13 @@ flutter run
 flutter test
 ```
 
-🚀 Ideias e Melhorias futuras:
+**🚀 Ideias e Melhorias futuras:**
 Se houvesse mais tempo disponível, planejaria implementar:
 
 ✅ Internacionalização (i18n): Possibilitando vários idiomas.
+
 ✅ Melhorias adicionais UI/UX: Animações, feedback visual refinado e maior interatividade.
+
 ✅ Utilizar pacotes mais robusto na criação de modulos como o Modular
 
 ## Tela inicial
