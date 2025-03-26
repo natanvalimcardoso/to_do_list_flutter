@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/themes/app_colors.dart';
 import '../../../../../core/themes/app_fonts.dart';
 import '../../domain/entities/to_do_entity.dart';
+import 'custom_checkbox_widget.dart';
 
 class ToDoItemWidget extends StatelessWidget {
   final ToDoEntity todo;
@@ -22,9 +23,15 @@ class ToDoItemWidget extends StatelessWidget {
     final size = MediaQuery.sizeOf(context);
 
     return Card(
-      elevation: isDark ? 0 : 2,
-      shadowColor: isDark ? Colors.transparent : AppColors.secondaryText.withValues(alpha: 0.2),
-      color: Theme.of(context).cardColor,
+      elevation: isDark || todo.completed ? 0 : 2,
+      shadowColor:
+          isDark || todo.completed
+              ? Colors.transparent
+              : AppColors.secondaryText.withValues(alpha: 0.2),
+      color:
+          isDark && todo.completed
+              ? AppColors.cardBackgroundDark.withValues(alpha: 0.2)
+              : Theme.of(context).cardColor, //
       margin: EdgeInsets.symmetric(vertical: size.height * 0.007, horizontal: size.width * 0.04),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -41,33 +48,7 @@ class ToDoItemWidget extends StatelessWidget {
       child: ListTile(
         leading: Transform.scale(
           scale: 1.3,
-          child: Checkbox(
-            value: todo.completed,
-            onChanged: onChanged,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-            side: BorderSide(
-              color:
-                  isDark
-                      ? todo.completed
-                          ? Theme.of(context).colorScheme.primary
-                          : AppColors.primaryTextDark
-                      : todo.completed
-                      ? Theme.of(context).colorScheme.primary
-                      : AppColors.secondaryText,
-              width: 1.5,
-            ),
-            checkColor: AppColors.greenDark,
-            fillColor: WidgetStateProperty.resolveWith<Color>(
-              (states) =>
-                  isDark
-                      ? todo.completed
-                          ? AppColors.completedGreen
-                          : AppColors.primaryTextDark
-                      : todo.completed
-                      ? AppColors.completedGreen
-                      : Colors.transparent,
-            ),
-          ),
+          child: CustomCheckbox(value: todo.completed, onChanged: onChanged),
         ),
         title: Text(
           todo.todo,

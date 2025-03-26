@@ -11,6 +11,7 @@ import '../bloc/to_do_state.dart';
 import '../widgets/add_to_do_widget.dart';
 import '../widgets/custom_app_bar_widget.dart';
 import '../widgets/section_title_widget.dart';
+import '../widgets/text_empty_widget.dart';
 import '../widgets/to_do_item_widget.dart';
 
 class ToDoPage extends StatefulWidget {
@@ -53,7 +54,7 @@ class _ToDoPageState extends State<ToDoPage> {
             }
 
             if (state is ToDoErrorState && state.todos.isEmpty) {
-              return Center(child: Text("Erro: ${state.message}"));
+              return Center(child: Text('Erro: ${state.message}'));
             }
 
             final todosAbertos = state.todos.where((e) => !e.completed).toList();
@@ -72,47 +73,59 @@ class _ToDoPageState extends State<ToDoPage> {
                   Divider(color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)),
                   const SectionTitleWidget(title: 'TO DO'),
                   if (todosAbertos.isEmpty)
-                    const Text("Nenhuma tarefa aberta.")
+                    const TextEmptyWidget(text: 'Nenhuma tarefa pendente.')
                   else
-                    ...todosAbertos.map(
-                      (todo) => ToDoItemWidget(
-                        todo: todo,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            RoutesConstant.todoDetail,
-                            arguments: ToDoDetailsEntity(todo: todo),
-                          ).then((_) {
-                            _bloc.add(const LoadTodosEvent());
-                          });
-                        },
-                        onChanged:
-                            (completed) =>
-                                _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
-                      ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: todosAbertos.length,
+                      itemBuilder: (context, index) {
+                        final todo = todosAbertos[index];
+                        return ToDoItemWidget(
+                          todo: todo,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RoutesConstant.todoDetail,
+                              arguments: ToDoDetailsEntity(todo: todo),
+                            ).then((_) {
+                              _bloc.add(const LoadTodosEvent());
+                            });
+                          },
+                          onChanged:
+                              (completed) =>
+                                  _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                        );
+                      },
                     ),
                   const SectionTitleWidget(title: 'COMPLETED'),
                   if (todosConcluidos.isEmpty)
-                    const Center(child: Text('Nenhuma tarefa finalizada.'))
+                    const TextEmptyWidget(text: 'Nenhuma tarefa concluída.')
                   else
-                    ...todosConcluidos.map(
-                      (todo) => ToDoItemWidget(
-                        todo: todo,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            RoutesConstant.todoDetail,
-                            arguments: ToDoDetailsEntity(todo: todo),
-                          ).then((_) {
-                            _bloc.add(const LoadTodosEvent());
-                          });
-                        },
-                        onChanged:
-                            (completed) =>
-                                _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
-                      ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: todosConcluidos.length,
+                      itemBuilder: (context, index) {
+                        final todo = todosConcluidos[index];
+                        return ToDoItemWidget(
+                          todo: todo,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              RoutesConstant.todoDetail,
+                              arguments: ToDoDetailsEntity(todo: todo),
+                            ).then((_) {
+                              _bloc.add(const LoadTodosEvent());
+                            });
+                          },
+                          onChanged:
+                              (completed) =>
+                                  _bloc.add(ToggleToDoEvent(id: todo.id, completed: completed!)),
+                        );
+                      },
                     ),
-                   SizedBox(height: size.height * 0.05),
+                  SizedBox(height: size.height * 0.05),
                 ],
               ),
             );

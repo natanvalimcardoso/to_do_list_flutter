@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../../core/constants/image_assets_constant.dart';
+import '../../../../../core/themes/app_fonts.dart';
+import '../../../../../core/utils/validations/validation_todo.dart';
 import '../../../../injections/injection_container.dart';
 import '../../domain/entities/to_do_entity.dart';
 import '../bloc/to_do_bloc.dart';
 import '../bloc/to_do_event.dart';
+import '../widgets/custom_checkbox_widget.dart';
+import '../widgets/custom_details_button_widget.dart';
+import '../widgets/custom_textfield_details_widget.dart';
 
 class ToDoDetailPage extends StatefulWidget {
   final ToDoEntity todo;
@@ -33,61 +40,97 @@ class _ToDoDetailPageState extends State<ToDoDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+
     return BlocProvider.value(
       value: _bloc,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Detalhes da Tarefa'),
+          title: Text(
+            'Detalhes da Tarefa',
+            style: TextStyle(fontSize: size.width * 0.05, fontWeight: FontWeight.bold),
+          ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.delete),
+              icon: Icon(Icons.delete, size: size.width * 0.06),
               onPressed: () {
-                _bloc.add(DeleteToDoEvent(widget.todo.id));
-                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text('Excluir Tarefa'),
+                        content: const Text('Tem certeza que deseja excluir esta tarefa?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancelar'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              _bloc.add(DeleteToDoEvent(widget.todo.id));
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Excluir'),
+                          ),
+                        ],
+                      ),
+                );
               },
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Editar Tarefa:', style: TextStyle(fontSize: 18)),
-              TextFormField(
-                controller: _editController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Descrição da tarefa',
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: size.width * 0.05,
+              vertical: size.height * 0.02,
+            ),
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                  ImageAssetsConstant.logo,
+                  width: size.width * 0.5,
+                  height: size.height * 0.3,
                 ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  const Text('Finalizar tarefa?', style: TextStyle(fontSize: 16)),
-                  Checkbox(
-                    value: widget.todo.completed,
-                    onChanged: (bool? completed) {
-                      final editedTodo = widget.todo.copyWith(completed: completed!);
-                      _bloc.add(UpdateToDoEvent(editedTodo));
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: () {
-                  final editedTodo = widget.todo.copyWith(todo: _editController.text.trim());
+                SizedBox(height: size.height * 0.04),
+                CustomTextfieldWidget(
+                  controller: _editController,
+                  label: 'Descrição da tarefa',
+                  icon: Icons.edit,
+                  validator: ValidationTodo.validateToDoDetails,
+                  maxLines: 3,
+                ),
+                SizedBox(height: size.height * 0.02),
 
-                  if (editedTodo.todo.isNotEmpty) {
+                Row(
+                  children: [
+                    const Text('Tarefa concluída: ', style: AppFonts.roboto16w400),
+                    Transform.scale(
+                      scale: 1.4,
+                      child: CustomCheckbox(
+                        value: widget.todo.completed,
+                        onChanged: (bool? completed) {
+                          final editedTodo = widget.todo.copyWith(completed: completed!);
+                          _bloc.add(UpdateToDoEvent(editedTodo));
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: size.height * 0.25),
+                CustomDetailsButtonWidget(
+                  onPressed: () {
+                    final editedTodo = widget.todo.copyWith(todo: _editController.text.trim());
+
                     _bloc.add(UpdateToDoEvent(editedTodo));
                     Navigator.pop(context);
-                  }
-                },
-                child: const Text('Salvar alterações'),
-              ),
-            ],
+                  },
+                  buttonText: 'Salvar alterações',
+                ),
+              ],
+            ),
           ),
         ),
       ),
