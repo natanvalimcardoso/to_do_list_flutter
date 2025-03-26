@@ -37,7 +37,7 @@ As escolhas técnicas garantem um projeto escalável, organizado e de fácil man
 
 - [x] Dark Mode & Light Mode  
 - [x] Armazenamento com Banco de Dados Local  
-- [x] Implementação de testes do padrão BLoC  
+- [x] Implementação de testes do BLoC    
 - [x] Injeção de dependências otimizadas com GetIt  
 
 ---
